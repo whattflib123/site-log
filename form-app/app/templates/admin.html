@@ -98,9 +98,9 @@
     padding: 0 16px;
     max-width: 800px; margin: 0 auto;
   }
-  .brand { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; border-radius: 12px; padding: 4px 8px 4px 4px; margin-left: -4px; }
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; border-radius: 0; padding: 4px 8px 4px 4px; margin-left: -4px; }
   .brand-mark {
-    width: 36px; height: 36px; border-radius: 10px;
+    width: 36px; height: 36px; border-radius: 0;
     background: linear-gradient(135deg, #42a5f5, #1565c0);
     display: grid; place-items: center; color: #fff;
   }
@@ -112,7 +112,7 @@
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     font: inherit; font-size: 14px; font-weight: 500; line-height: 1;
     min-height: 42px; padding: 0 16px;
-    border-radius: 12px; border: 1px solid transparent;
+    border-radius: 0; border: 1px solid transparent;
     cursor: pointer; text-decoration: none; white-space: nowrap;
     transition: background-color .2s, border-color .2s, color .2s;
   }
@@ -130,13 +130,13 @@
   .wrap { max-width: 800px; margin: 0 auto; padding: 0 16px 24px; }
   h1 { font-size: 22px; font-weight: 500; margin: 8px 0 4px; }
   .lead { color: var(--text-2); margin: 0 0 16px; }
-  .panel { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+  .panel { background: var(--paper); border: 1px solid var(--line); border-radius: 0; padding: 16px; margin-bottom: 16px; }
   .panel h2 { font-size: 16px; font-weight: 500; margin: 0 0 12px; }
   form.add { display: flex; gap: 8px; }
   form.add input {
     flex: 1; min-width: 0; min-height: 48px; padding: 0 14px;
     font: inherit; font-size: 16px; color: var(--text); background: transparent;
-    border: 1px solid var(--outline); border-radius: 12px;
+    border: 1px solid var(--outline); border-radius: 0;
   }
   form.add input:hover { border-color: var(--outline-hover); }
   form.add.project { flex-wrap: wrap; }
@@ -144,7 +144,7 @@
   form.add.project input[name=title] { flex: 2 1 240px; }
   h2.section { font-size: 18px; font-weight: 500; margin: 28px 0 4px; }
   form.add .btn { min-height: 48px; }
-  .notice { border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; overflow-wrap: anywhere; }
+  .notice { border-radius: 0; padding: 12px 16px; margin-bottom: 16px; overflow-wrap: anywhere; }
   .notice.ok { background: var(--primary-soft); color: var(--text); border: 1px solid var(--primary-selected); }
   .notice.err { background: var(--error-soft); color: var(--error); }
   ul.list { list-style: none; margin: 0; padding: 0; }

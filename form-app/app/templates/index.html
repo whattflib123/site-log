@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#212121" media="(prefers-color-scheme: dark)">
 <link rel="preload" href="static/fonts/roboto-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-  /* 視覺語言對齊 Cloudreve 網盤（Material / MUI）：Roboto、主色 #1976d2、圓角 12px、灰底＋白面板、outlined 輸入框 */
+  /* 視覺語言對齊 Cloudreve 網盤（Material / MUI）：Roboto、主色 #1976d2、直角、灰底＋白面板、outlined 輸入框 */
   /* 越南文的聲調字母不在 latin 子集裡，另外載 vietnamese 子集（@fontsource/roboto 5.3.0）；泰文用系統字型 */
   @font-face { font-family: "Roboto"; font-weight: 400; font-display: swap; src: url("static/fonts/roboto-latin-400-normal.woff2") format("woff2"); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
   @font-face { font-family: "Roboto"; font-weight: 400; font-display: swap; src: url("static/fonts/roboto-vietnamese-400-normal.woff2") format("woff2"); unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB; }
@@ -108,9 +108,9 @@
     padding: 0 16px;
     max-width: 800px; margin: 0 auto;
   }
-  .brand { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; border-radius: 12px; padding: 4px 8px 4px 4px; margin-left: -4px; }
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; border-radius: 0; padding: 4px 8px 4px 4px; margin-left: -4px; }
   .brand-mark {
-    width: 36px; height: 36px; border-radius: 10px;
+    width: 36px; height: 36px; border-radius: 0;
     background: linear-gradient(135deg, #42a5f5, #1565c0);
     display: grid; place-items: center; color: #fff;
   }
@@ -130,7 +130,7 @@
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     font: inherit; font-size: 14px; font-weight: 500; line-height: 1;
     min-height: 42px; padding: 0 16px;
-    border-radius: 12px; border: 1px solid transparent;
+    border-radius: 0; border: 1px solid transparent;
     cursor: pointer; text-decoration: none; white-space: nowrap;
     transition: background-color .2s, border-color .2s, color .2s;
   }
@@ -151,7 +151,7 @@
     display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px;
     margin: 4px 0 12px; padding: 10px 12px 10px 16px;
     background: var(--warning-soft); border: 1px solid var(--line); border-left: 4px solid var(--warning);
-    border-radius: 12px; font-size: 14px; line-height: 1.5;
+    border-radius: 0; font-size: 14px; line-height: 1.5;
   }
   .mt-note[hidden] { display: none; }
   .mt-note .mt-text { flex: 1 1 220px; min-width: 0; }
@@ -169,16 +169,16 @@
   }
   .mt-note.collapsed .mt-text { flex: 1 1 auto; display: flex; }
 
-  /* 麵包屑列（同 Cloudreve 路徑列：白底外框、圓角 12px） */
+  /* 麵包屑列（同 Cloudreve 路徑列：白底外框、直角） */
   .crumbs {
     display: flex; align-items: center; gap: 2px;
     min-height: 42px; padding: 0 6px;
-    background: var(--paper); border: 1px solid var(--line); border-radius: 12px;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 0;
     overflow: hidden; white-space: nowrap;
   }
   .crumbs a, .crumbs .here {
     display: inline-flex; align-items: center; gap: 6px; min-width: 0;
-    padding: 6px 8px; border-radius: 8px;
+    padding: 6px 8px; border-radius: 0;
     color: var(--text-2); text-decoration: none; font-size: 14px;
   }
   .crumbs a:hover { background: var(--hover); color: var(--text); }
@@ -195,8 +195,8 @@
 
   .stack { display: flex; flex-direction: column; gap: 16px; }
 
-  /* 面板（同 Cloudreve 內容區：白底、細框、圓角 12px、無陰影） */
-  .card { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px 20px; }
+  /* 面板（同 Cloudreve 內容區：白底、細框、直角、無陰影） */
+  .card { background: var(--paper); border: 1px solid var(--line); border-radius: 0; padding: 16px 20px 20px; }
   .card-label { display: flex; align-items: center; gap: 8px; min-height: 28px; margin-bottom: 12px; }
   .card-label .idx { display: none; }
   .card-label h2 { margin: 0; font-size: 14px; font-weight: 500; }
@@ -211,7 +211,7 @@
   input[type="text"], input[type="date"], textarea {
     font: inherit; font-size: 16px; color: var(--text);
     background: transparent;
-    border: 1px solid var(--outline); border-radius: 12px;
+    border: 1px solid var(--outline); border-radius: 0;
     padding: 12px 14px; min-height: 48px; width: 100%;
     transition: border-color .15s, box-shadow .15s;
   }
@@ -234,7 +234,7 @@
   a.project-item {
     display: flex; align-items: center; gap: 14px;
     min-height: 60px; padding: 8px 12px;
-    color: var(--text); text-decoration: none; border-radius: 12px;
+    color: var(--text); text-decoration: none; border-radius: 0;
   }
   a.project-item:hover { background: var(--hover); }
   a.project-item .folder { color: var(--text-2); width: 24px; height: 24px; }
@@ -252,13 +252,13 @@
   a.cat-tile {
     display: flex; align-items: center; gap: 12px;
     min-height: 72px; padding: 12px 14px;
-    background: var(--paper); border: 1px solid var(--line); border-radius: 12px;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 0;
     color: var(--text); text-decoration: none;
     transition: background-color .15s, border-color .15s;
   }
   a.cat-tile:hover { background: var(--hover); }
   .doc-badge {
-    width: 32px; height: 32px; border-radius: 8px; flex: none;
+    width: 32px; height: 32px; border-radius: 0; flex: none;
     display: grid; place-items: center;
     background: var(--primary-soft); color: var(--primary);
   }
@@ -270,22 +270,22 @@
 
   /* ---- 照片筆數（同 Cloudreve 檔案卡：淡灰外框、白色內層） ---- */
   #entries { display: flex; flex-direction: column; gap: 16px; }
-  .entry { background: var(--tonal); border-radius: 12px; padding: 4px 8px 8px; }
+  .entry { background: var(--tonal); border-radius: 0; padding: 4px 8px 8px; }
   .entry-head { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 4px 0 8px; }
   .entry-head .badge {
-    min-width: 24px; height: 24px; padding: 0 6px; border-radius: 6px;
+    min-width: 24px; height: 24px; padding: 0 6px; border-radius: 0;
     display: grid; place-items: center;
     background: var(--primary); color: var(--on-primary);
     font-size: 12px; font-weight: 500; font-variant-numeric: tabular-nums;
   }
   .entry-head .entry-name { font-size: 14px; font-weight: 500; }
   .entry-head .entry-remove { margin-left: auto; }
-  .entry-body { background: var(--paper); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 16px; }
+  .entry-body { background: var(--paper); border-radius: 0; padding: 12px; display: flex; flex-direction: column; gap: 16px; }
 
   label.photoslot {
     display: flex; align-items: center; justify-content: center;
     position: relative; min-height: 184px;
-    border: 1px dashed var(--outline); border-radius: 10px;
+    border: 1px dashed var(--outline); border-radius: 0;
     background: transparent; color: var(--text-2);
     cursor: pointer; overflow: hidden;
     transition: border-color .15s, background-color .15s;
@@ -300,11 +300,11 @@
   label.photoslot .replace-tag {
     position: absolute; left: 8px; bottom: 8px;
     background: var(--overlay); color: #fff;
-    font-size: 12px; padding: 4px 8px; border-radius: 8px;
+    font-size: 12px; padding: 4px 8px; border-radius: 0;
   }
   .photo-rm {
     position: absolute; top: 8px; right: 8px; z-index: 2;
-    width: 32px; height: 32px; border-radius: 50%; border: none;
+    width: 32px; height: 32px; border-radius: 0; border: none;
     background: var(--overlay); color: #fff; cursor: pointer;
     display: grid; place-items: center;
   }
@@ -316,7 +316,7 @@
   .add-entry {
     display: flex; align-items: center; justify-content: center; gap: 8px;
     width: 100%; min-height: 48px; margin-top: 16px;
-    border-radius: 12px; border: 1px dashed var(--outline);
+    border-radius: 0; border: 1px dashed var(--outline);
     background: transparent; color: var(--text-2);
     font: inherit; font-size: 14px; font-weight: 500; cursor: pointer;
   }
@@ -348,7 +348,7 @@
     position: fixed; left: 50%; bottom: calc(92px + env(safe-area-inset-bottom)); z-index: 20;
     transform: translateX(-50%) translateY(8px);
     background: var(--snack-bg); color: var(--snack-text);
-    font-size: 14px; padding: 12px 16px; border-radius: 12px;
+    font-size: 14px; padding: 12px 16px; border-radius: 0;
     box-shadow: 0 3px 5px -1px rgba(0,0,0,.2), 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12);
     opacity: 0; pointer-events: none;
     transition: opacity .2s, transform .2s;
