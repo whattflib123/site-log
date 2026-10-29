@@ -2,7 +2,6 @@ import json
 import logging
 import mimetypes
 import secrets
-import time
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import parse_qs, quote, urlencode
@@ -90,36 +89,6 @@ PAGE_CSP = "; ".join([
 ])
 
 
-_drive_cache = {"at": float("-inf"), "emails": set()}  # -inf = 下次要重讀
-
-
-def drive_viewers() -> set[str]:
-    """網盤白名單（快取 60 秒，免得每次開表單都打 Cloudflare API）。讀不到就沿用上次的。"""
-    if not settings.drive_admin_enabled:
-        return set()
-    if time.monotonic() - _drive_cache["at"] > 60:
-        whitelist = Whitelist(settings, list_id=settings.cf_drive_list_id)
-        try:
-            _drive_cache["emails"] = {i["value"].lower() for i in whitelist.items()}
-        except WhitelistError:
-            pass
-        finally:
-            whitelist.client.close()
-            _drive_cache["at"] = time.monotonic()
-    return _drive_cache["emails"]
-
-
-def drive_link(email: str) -> str:
-    email = (email or "").lower()
-    if not email:
-        return ""
-    if email in settings.admins:
-        return settings.drive_url
-    if settings.drive_share_url and email in drive_viewers():
-        return settings.drive_share_url
-    return ""
-
-
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request, email: str = Depends(require_access)) -> HTMLResponse:
     nonce = secrets.token_urlsafe(16)
@@ -128,8 +97,6 @@ def index(request: Request, email: str = Depends(require_access)) -> HTMLRespons
         "turnstile_site_key": settings.turnstile_site_key,
         "pin_enabled": bool(settings.upload_pin),
         "max_photos": settings.max_photos,
-        # 網盤只給管理者（A）和網盤白名單的人；其他填表人員的頁面不放網盤連結
-        "drive_url": drive_link(email),
     })
     response.headers["Content-Security-Policy"] = "; ".join([
         "default-src 'self'",
@@ -375,13 +342,11 @@ async def admin_action(request: Request, admin: str, action: str, drive: bool = 
                 return back(prefix + "exists", email)
             whitelist.add(email, admin)
             log.info("%s add %s by %s", name, email, admin)
-            _drive_cache["at"] = float("-inf")
             return back(prefix + "added", email)
         if email not in current:
             return back(prefix + "missing", email)
         whitelist.remove(email)
         log.info("%s remove %s by %s", name, email, admin)
-        _drive_cache["at"] = float("-inf")
         # 對方已經拿到的登入要等到期（30 天）才會失效，所以移除時一併撤銷。
         # Cloudflare 的撤銷是整個帳戶的登入，表單和網盤都會被登出，還在另一份清單的人重新收驗證碼即可
         try:

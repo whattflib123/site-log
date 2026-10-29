@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     # 選填的第二層「上傳代碼」；留空不檢查
     upload_pin: str = ""
 
-    # 頁首「網盤」連結；留空不顯示（例：https://drive.example.com）
+    # /admin 頁首的「網盤」連結；留空不顯示（例：https://drive.example.com）。表單頁不放網盤連結
     drive_url: str = ""
 
     # Cloudflare Turnstile；secret 留空 = 不驗證（只適合本機）
@@ -44,7 +44,7 @@ class Settings(BaseSettings):
 
     # 網盤白名單（Cloudflare Access 應用程式「drive」引用的 email 清單）；空白 = /admin 不顯示這一區
     cf_drive_list_id: str = ""
-    # 網盤白名單的人沒有網盤帳號，表單頁的「網盤」連結給他們 form-output 的分享連結
+    # form-output 的分享連結（網盤白名單的人用它看檔案，不用網盤帳號）；/admin 的網盤白名單區會附上
     drive_share_url: str = ""
 
     # 管理者維護的共用工程清單（compose 掛 ./data/form-app 到 /data）

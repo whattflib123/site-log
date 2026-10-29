@@ -55,7 +55,6 @@ def cf(setup):  # noqa: F811
 
     setup.router.get(f"{DRIVE_LIST_URL}/items").mock(side_effect=drive_items)
     setup.router.patch(DRIVE_LIST_URL).mock(side_effect=drive_patch)
-    main._drive_cache["at"] = float("-inf")
     setup.router.post(REVOKE_URL).mock(side_effect=lambda r: state["revoked"].append(json.loads(r.content))
                                        or httpx.Response(200, json={"success": True, "result": True}))
     return state
@@ -163,13 +162,11 @@ def test_drive_whitelist_admin_only(cf):
     assert cf["drive"] == []
 
 
-def test_drive_link_by_role(admin, cf, monkeypatch):
+def test_form_page_has_no_drive_link(admin, cf, monkeypatch):
+    """表單頁對誰都不放網盤按鈕（管理者從 /admin 進網盤）。"""
     monkeypatch.setattr(main.settings, "drive_url", "https://drive.example.com")
-    worker = TestClient(main.app, headers={"Cf-Access-Jwt-Assertion": access_token(email="worker@example.com")})
-    viewer = TestClient(main.app, headers={"Cf-Access-Jwt-Assertion": access_token(email="viewer@example.com")})
-    assert "drive.example.com" not in worker.get("/").text  # 填表人員看不到
-    assert 'href="https://drive.example.com"' in admin.get("/").text  # 管理者：網盤首頁
     cf["drive"].append({"value": "viewer@example.com", "created_at": "2026-10-29T00:00:00Z"})
-    main._drive_cache["at"] = float("-inf")
-    assert 'href="https://drive.example.com/s/abc"' in viewer.get("/").text  # 網盤白名單：分享連結
-    assert "drive.example.com" not in worker.get("/").text
+    viewer = TestClient(main.app, headers={"Cf-Access-Jwt-Assertion": access_token(email="viewer@example.com")})
+    assert "drive.example.com" not in admin.get("/").text
+    assert "drive.example.com" not in viewer.get("/").text
+    assert 'href="https://drive.example.com"' in admin.get("/admin").text

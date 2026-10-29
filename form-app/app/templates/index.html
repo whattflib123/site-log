@@ -361,8 +361,6 @@
     .brand-name { font-size: 18px; }
     .card { padding: 14px 16px 16px; }
     header.topbar { padding-top: 16px; }
-    .drive-link .label { display: none; }
-    .drive-link { padding: 0 12px; }
 
   }
   @media (prefers-reduced-motion: reduce) {
@@ -380,7 +378,6 @@
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
   <symbol id="i-close" viewBox="0 0 24 24"><path d="m6.5 6.5 11 11m0-11-11 11"/></symbol>
   <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 6.5h15M9.5 6.5V5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1.5M6.5 6.5l.8 12.1a1.5 1.5 0 0 0 1.5 1.4h6.4a1.5 1.5 0 0 0 1.5-1.4l.8-12.1"/></symbol>
-  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18.5a4.5 4.5 0 0 1-.6-8.96 6 6 0 0 1 11.5 1.46A3.75 3.75 0 0 1 17.25 18.5z"/></symbol>
   <symbol id="i-helmet" viewBox="0 0 24 24"><path d="M3.5 17.5h17M5 17.5V15a7 7 0 0 1 14 0v2.5M10 8.4V6h4v2.4M12 6v4"/></symbol>
   <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.3 2.4 3.5 5.2 3.5 8.5s-1.2 6.1-3.5 8.5c-2.3-2.4-3.5-5.2-3.5-8.5s1.2-6.1 3.5-8.5z"/></symbol>
   <symbol id="i-save" viewBox="0 0 24 24"><path d="M12 4v10m0 0-4-4m4 4 4-4M5 15.5V18a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2.5"/></symbol>
@@ -403,11 +400,6 @@
         <option value="th" lang="th">ไทย</option>
       </select>
     </label>
-    {% if drive_url %}
-    <a class="btn btn-outlined drive-link" href="{{ drive_url }}" target="_blank" rel="noopener" aria-label="開啟網盤" data-i18n-aria="openDrive">
-      <svg class="ic"><use href="#i-cloud"/></svg><span class="label" data-i18n="drive">網盤</span>
-    </a>
-    {% endif %}
   </div>
 </header>
 
@@ -635,7 +627,7 @@
   var LANG_KEY = "site-log-lang";
   var I18N = {
     zh: {
-      brand: "工地隨手記", brandHome: "工地隨手記首頁", drive: "網盤", openDrive: "開啟網盤",
+      brand: "工地隨手記", brandHome: "工地隨手記首頁",
       short: "中文", mtNote: "", mtShort: "", mtAck: "知道了",
       crumbs: "目前位置", allProjects: "所有工程", homeTitle: "工程列表",
       homeLead: "選擇工程進入各類紀錄表單，拍照填寫後產生 Word，自動存進網盤。",
@@ -667,7 +659,7 @@
       savedToast: "已存進網盤：{name}", notDone: "未完成", notDoneToast: "未完成：{msg}",
     },
     en: {
-      brand: "Site Log", brandHome: "Site Log home", drive: "Drive", openDrive: "Open drive",
+      brand: "Site Log", brandHome: "Site Log home",
       short: "EN", mtNote: "", mtShort: "", mtAck: "Got it",
       crumbs: "Breadcrumb", allProjects: "All projects", homeTitle: "Projects",
       homeLead: "Choose a project and a form, take photos and fill in the details. A document is created and saved to the company drive.",
@@ -702,7 +694,7 @@
       short: "VI",
       mtNote: "Bản dịch tiếng Việt có thể chưa chính xác. Nếu không chắc, vui lòng xem bản tiếng Trung hoặc tiếng Anh.",
       mtShort: "⚠ Bản dịch chỉ để tham khảo", mtAck: "Đã hiểu",
-      brand: "Nhật ký công trường", brandHome: "Trang chủ Nhật ký công trường", drive: "Ổ lưu trữ", openDrive: "Mở ổ lưu trữ",
+      brand: "Nhật ký công trường", brandHome: "Trang chủ Nhật ký công trường",
       crumbs: "Vị trí hiện tại", allProjects: "Tất cả công trình", homeTitle: "Danh sách công trình",
       homeLead: "Chọn công trình và loại biểu mẫu, chụp ảnh và điền thông tin. Tài liệu sẽ được tạo và tự động lưu vào ổ lưu trữ của công ty.",
       projects: "Công trình", projectCount: "{n}", noProjects: "Chưa có công trình nào. Vui lòng liên hệ quản lý để thêm.",
@@ -736,7 +728,7 @@
       short: "ไทย",
       mtNote: "คำแปลภาษาไทยอาจไม่ถูกต้องทั้งหมด หากไม่แน่ใจ กรุณายึดฉบับภาษาจีนหรือภาษาอังกฤษเป็นหลัก",
       mtShort: "⚠ คำแปลใช้อ้างอิงเท่านั้น", mtAck: "รับทราบ",
-      brand: "บันทึกหน้างาน", brandHome: "หน้าแรก บันทึกหน้างาน", drive: "ไดรฟ์", openDrive: "เปิดไดรฟ์",
+      brand: "บันทึกหน้างาน", brandHome: "หน้าแรก บันทึกหน้างาน",
       crumbs: "ตำแหน่งปัจจุบัน", allProjects: "โครงการทั้งหมด", homeTitle: "รายการโครงการ",
       homeLead: "เลือกโครงการและแบบฟอร์ม ถ่ายรูปและกรอกข้อมูล ระบบจะสร้างเอกสารและบันทึกลงไดรฟ์ของบริษัทโดยอัตโนมัติ",
       projects: "โครงการ", projectCount: "{n}", noProjects: "ยังไม่มีโครงการ กรุณาติดต่อผู้ดูแลเพื่อเพิ่มโครงการ",
