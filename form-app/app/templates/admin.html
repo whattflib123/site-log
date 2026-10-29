@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="zh-Hant">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>白名單管理</title>
+<meta name="theme-color" content="#f5f5f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#212121" media="(prefers-color-scheme: dark)">
+<style>
+  /* 樣式與 index.html 相同（Cloudreve 網盤風格）；改這裡要一起改 index.html */
+  @font-face { font-family: "Roboto"; font-weight: 400; font-display: swap; src: url("/static/fonts/roboto-latin-400-normal.woff2") format("woff2"); }
+  @font-face { font-family: "Roboto"; font-weight: 500; font-display: swap; src: url("/static/fonts/roboto-latin-500-normal.woff2") format("woff2"); }
+  @font-face { font-family: "Roboto"; font-weight: 700; font-display: swap; src: url("/static/fonts/roboto-latin-700-normal.woff2") format("woff2"); }
+
+  :root {
+    color-scheme: light;
+    --bg: #f5f5f5;
+    --paper: #ffffff;
+    --tonal: #f5f5f5;
+    --line: rgba(0, 0, 0, 0.12);
+    --outline: rgba(0, 0, 0, 0.23);
+    --outline-hover: rgba(0, 0, 0, 0.87);
+    --text: rgba(0, 0, 0, 0.87);
+    --text-2: rgba(0, 0, 0, 0.6);
+    --text-3: rgba(0, 0, 0, 0.38);
+    --hover: rgba(0, 0, 0, 0.04);
+    --primary: #1976d2;
+    --primary-hover: #1565c0;
+    --on-primary: #ffffff;
+    --primary-soft: rgba(25, 118, 210, 0.08);
+    --primary-selected: rgba(25, 118, 210, 0.16);
+    --error: #d32f2f;
+    --error-soft: rgba(211, 47, 47, 0.08);
+    --disabled-bg: rgba(0, 0, 0, 0.12);
+    --disabled-text: rgba(0, 0, 0, 0.26);
+    --snack-bg: #323232;
+    --snack-text: #ffffff;
+    --overlay: rgba(0, 0, 0, 0.56);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #212121;
+      --paper: #121212;
+      --tonal: #272727;
+      --line: rgba(255, 255, 255, 0.12);
+      --outline: rgba(255, 255, 255, 0.23);
+      --outline-hover: #ffffff;
+      --text: #ffffff;
+      --text-2: rgba(255, 255, 255, 0.7);
+      --text-3: rgba(255, 255, 255, 0.5);
+      --hover: rgba(255, 255, 255, 0.08);
+      --primary: #90caf9;
+      --primary-hover: #64b5f6;
+      --on-primary: rgba(0, 0, 0, 0.87);
+      --primary-soft: rgba(144, 202, 249, 0.08);
+      --primary-selected: rgba(144, 202, 249, 0.16);
+      --error: #f44336;
+      --error-soft: rgba(244, 67, 54, 0.12);
+      --disabled-bg: rgba(255, 255, 255, 0.12);
+      --disabled-text: rgba(255, 255, 255, 0.3);
+      --snack-bg: #f5f5f5;
+      --snack-text: rgba(0, 0, 0, 0.87);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #212121; --paper: #121212; --tonal: #272727;
+    --line: rgba(255, 255, 255, 0.12); --outline: rgba(255, 255, 255, 0.23); --outline-hover: #ffffff;
+    --text: #ffffff; --text-2: rgba(255, 255, 255, 0.7); --text-3: rgba(255, 255, 255, 0.5);
+    --hover: rgba(255, 255, 255, 0.08);
+    --primary: #90caf9; --primary-hover: #64b5f6; --on-primary: rgba(0, 0, 0, 0.87);
+    --primary-soft: rgba(144, 202, 249, 0.08); --primary-selected: rgba(144, 202, 249, 0.16);
+    --error: #f44336; --error-soft: rgba(244, 67, 54, 0.12);
+    --disabled-bg: rgba(255, 255, 255, 0.12); --disabled-text: rgba(255, 255, 255, 0.3);
+    --snack-bg: #f5f5f5; --snack-text: rgba(0, 0, 0, 0.87);
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Roboto, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  body.has-actionbar { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
+  svg.ic { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ---- app bar（同 Cloudreve 頂列：灰底、無陰影） ---- */
+  .appbar {
+    height: 64px;
+    display: flex; align-items: center; gap: 12px;
+    padding: 0 16px;
+    max-width: 800px; margin: 0 auto;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; border-radius: 12px; padding: 4px 8px 4px 4px; margin-left: -4px; }
+  .brand-mark {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, #42a5f5, #1565c0);
+    display: grid; place-items: center; color: #fff;
+  }
+  .brand-mark svg { width: 22px; height: 22px; stroke-width: 1.8; }
+  .brand-name { font-size: 20px; font-weight: 500; letter-spacing: 0.01em; }
+  .appbar .spacer { flex: 1; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font: inherit; font-size: 14px; font-weight: 500; line-height: 1;
+    min-height: 42px; padding: 0 16px;
+    border-radius: 12px; border: 1px solid transparent;
+    cursor: pointer; text-decoration: none; white-space: nowrap;
+    transition: background-color .2s, border-color .2s, color .2s;
+  }
+  .btn-contained { background: var(--primary); color: var(--on-primary); }
+  .btn-contained:hover { background: var(--primary-hover); }
+  .btn-outlined { color: var(--text); border-color: var(--line); background: var(--paper); }
+  .btn-outlined:hover { background: var(--hover); border-color: var(--outline); }
+  .btn-text { color: var(--text-2); background: transparent; min-height: 36px; padding: 0 10px; }
+  .btn-text:hover { background: var(--hover); color: var(--text); }
+  .btn-text.danger:hover { background: var(--error-soft); color: var(--error); }
+  .btn:disabled { background: var(--disabled-bg); color: var(--disabled-text); border-color: transparent; cursor: default; }
+  :is(a, button, label, input, textarea):focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+
+  .wrap { max-width: 800px; margin: 0 auto; padding: 0 16px 24px; }
+  h1 { font-size: 22px; font-weight: 500; margin: 8px 0 4px; }
+  .lead { color: var(--text-2); margin: 0 0 16px; }
+  .panel { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+  .panel h2 { font-size: 16px; font-weight: 500; margin: 0 0 12px; }
+  form.add { display: flex; gap: 8px; }
+  form.add input {
+    flex: 1; min-width: 0; min-height: 48px; padding: 0 14px;
+    font: inherit; font-size: 16px; color: var(--text); background: transparent;
+    border: 1px solid var(--outline); border-radius: 12px;
+  }
+  form.add input:hover { border-color: var(--outline-hover); }
+  form.add.project { flex-wrap: wrap; }
+  form.add.project input[name=name] { flex: 1 1 160px; }
+  form.add.project input[name=title] { flex: 2 1 240px; }
+  h2.section { font-size: 18px; font-weight: 500; margin: 28px 0 4px; }
+  form.add .btn { min-height: 48px; }
+  .notice { border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; overflow-wrap: anywhere; }
+  .notice.ok { background: var(--primary-soft); color: var(--text); border: 1px solid var(--primary-selected); }
+  .notice.err { background: var(--error-soft); color: var(--error); }
+  ul.list { list-style: none; margin: 0; padding: 0; }
+  ul.list li { display: flex; align-items: center; gap: 12px; padding: 10px 4px; border-top: 1px solid var(--line); }
+  ul.list li:first-child { border-top: 0; }
+  .who { flex: 1; min-width: 0; }
+  .who .mail { overflow-wrap: anywhere; }
+  .who .meta { font-size: 12px; color: var(--text-2); overflow-wrap: anywhere; }
+  ul.list form { margin: 0; }
+  .empty { color: var(--text-2); padding: 8px 4px; }
+  .count { color: var(--text-2); font-weight: 400; font-size: 14px; }
+  @media (max-width: 599px) { .appbar { height: 56px; } .brand-name { font-size: 18px; } }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-helmet" viewBox="0 0 24 24"><path d="M3.5 17.5h17M5 17.5V15a7 7 0 0 1 14 0v2.5M10 8.4V6h4v2.4M12 6v4"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18.5a4.5 4.5 0 0 1-.6-8.96 6 6 0 0 1 11.5 1.46A3.75 3.75 0 0 1 17.25 18.5z"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 6.5h15M9.5 6.5V5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1.5M6.5 6.5l.8 12.1a1.5 1.5 0 0 0 1.5 1.4h6.4a1.5 1.5 0 0 0 1.5-1.4l.8-12.1"/></symbol>
+</svg>
+
+<header class="appbar">
+  <a class="brand" href="/" aria-label="回到表單">
+    <span class="brand-mark"><svg class="ic"><use href="#i-helmet"/></svg></span>
+    <span class="brand-name">工地隨手記</span>
+  </a>
+  <span class="spacer"></span>
+  {% if drive_url %}
+  <a class="btn btn-outlined" href="{{ drive_url }}" target="_blank" rel="noopener" aria-label="開啟網盤">
+    <svg class="ic"><use href="#i-cloud"/></svg><span>網盤</span>
+  </a>
+  {% endif %}
+</header>
+
+<main class="wrap">
+  <h1>管理頁</h1>
+  <p class="lead">管理誰可以登入表單、誰可以看網盤，以及工程清單。</p>
+
+  {% if message %}
+  <div class="notice {{ 'ok' if ok else 'err' }}" role="status">{{ message }}{% if subject %}：{{ subject }}{% endif %}</div>
+  {% endif %}
+
+  <h2 class="section">表單白名單</h2>
+  <p class="lead">清單裡的 email 可以登入表單、上傳照片紀錄。移除時會同時登出對方。</p>
+
+  <section class="panel">
+    <h2>新增</h2>
+    <form class="add" method="post" action="/admin/add">
+      <input type="email" name="email" required maxlength="254" placeholder="name@example.com" autocomplete="off" aria-label="要加入的 email">
+      <button class="btn btn-contained" type="submit"><svg class="ic"><use href="#i-plus"/></svg>加入</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>目前名單 <span class="count">{{ items|length }} 人</span></h2>
+    {% if failed %}
+    <div class="notice err">讀取名單失敗，連不到 Cloudflare，請稍後重新整理。</div>
+    {% elif not items %}
+    <p class="empty">名單是空的。</p>
+    {% else %}
+    <ul class="list">
+      {% for i in items %}
+      <li>
+        <div class="who">
+          <div class="mail">{{ i.value }}</div>
+          <div class="meta">{{ i.description or ("加入於 " ~ i.created_at[:10]) }}</div>
+        </div>
+        <form method="post" action="/admin/remove">
+          <input type="hidden" name="email" value="{{ i.value }}">
+          <button class="btn btn-text danger" type="submit" aria-label="移除 {{ i.value }}"><svg class="ic"><use href="#i-trash"/></svg>移除</button>
+        </form>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </section>
+
+  {% if drive_enabled %}
+  <h2 class="section" id="drive">網盤白名單</h2>
+  <p class="lead">加入後可以額外看、下載表單產生的檔案{% if drive_share_url %}：<a href="{{ drive_share_url }}" target="_blank" rel="noopener">{{ drive_share_url }}</a>{% endif %}</p>
+
+  <section class="panel">
+    <h2>新增</h2>
+    <form class="add" method="post" action="/admin/drive/add">
+      <input type="email" name="email" required maxlength="254" placeholder="name@example.com" autocomplete="off" aria-label="要加入網盤白名單的 email">
+      <button class="btn btn-contained" type="submit"><svg class="ic"><use href="#i-plus"/></svg>加入</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>目前名單 <span class="count">{{ drive_items|length }} 人</span></h2>
+    {% if drive_failed %}
+    <div class="notice err">讀取名單失敗，連不到 Cloudflare，請稍後重新整理。</div>
+    {% elif not drive_items %}
+    <p class="empty">名單是空的。你自己不用加，管理者本來就看得到。</p>
+    {% else %}
+    <ul class="list">
+      {% for i in drive_items %}
+      <li>
+        <div class="who">
+          <div class="mail">{{ i.value }}</div>
+          <div class="meta">{{ i.description or ("加入於 " ~ i.created_at[:10]) }}</div>
+        </div>
+        <form method="post" action="/admin/drive/remove">
+          <input type="hidden" name="email" value="{{ i.value }}">
+          <button class="btn btn-text danger" type="submit" aria-label="從網盤白名單移除 {{ i.value }}"><svg class="ic"><use href="#i-trash"/></svg>移除</button>
+        </form>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  <h2 class="section" id="projects">工程清單</h2>
+  <p class="lead">填表人員只能從這份清單選工程，名稱一致，網盤裡比較好整理。刪除工程不會刪掉網盤裡已經存的檔案。</p>
+
+  <section class="panel">
+    <h2>新增工程</h2>
+    <form class="add project" method="post" action="/admin/projects/add">
+      <input type="text" name="name" required maxlength="40" placeholder="工程簡稱（例：河濱公園）" autocomplete="off" aria-label="工程簡稱">
+      <input type="text" name="title" maxlength="100" placeholder="Word 上的工程名稱（選填）" autocomplete="off" aria-label="Word 上的工程名稱">
+      <button class="btn btn-contained" type="submit"><svg class="ic"><use href="#i-plus"/></svg>新增</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>目前工程 <span class="count">{{ projects|length }} 項</span></h2>
+    {% if projects_failed %}
+    <div class="notice err">讀取工程清單失敗，請稍後重新整理。</div>
+    {% elif not projects %}
+    <p class="empty">還沒有工程。填表人員要等你加了工程才能填表單。</p>
+    {% else %}
+    <ul class="list">
+      {% for p in projects %}
+      <li>
+        <div class="who">
+          <div class="mail">{{ p.name }}</div>
+          <div class="meta">{% if p.title %}{{ p.title }} · {% endif %}{{ p.note }}</div>
+        </div>
+        <form method="post" action="/admin/projects/remove">
+          <input type="hidden" name="id" value="{{ p.id }}">
+          <button class="btn btn-text danger" type="submit" aria-label="刪除 {{ p.name }}"><svg class="ic"><use href="#i-trash"/></svg>刪除</button>
+        </form>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </section>
+  <p class="lead">登入身分：{{ admin }}</p>
+</main>
+</html>

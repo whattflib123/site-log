@@ -1,0 +1,5 @@
+# 每天 03:30（主機時區 Asia/Taipei）備份 Cloudreve 資料庫到 R2。
+# 安裝：sudo install -m 644 scripts/sitelog-backup.cron /etc/cron.d/sitelog-backup
+# 結果：/var/log/sitelog-backup.log
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+30 3 * * * root /srv/sitelog/scripts/backup.sh >> /var/log/sitelog-backup.log 2>&1

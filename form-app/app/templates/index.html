@@ -1,0 +1,1399 @@
+<!doctype html>
+<html lang="zh-Hant">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>工地隨手記</title>
+<meta name="theme-color" content="#f5f5f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#212121" media="(prefers-color-scheme: dark)">
+<link rel="preload" href="static/fonts/roboto-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /* 視覺語言對齊 Cloudreve 網盤（Material / MUI）：Roboto、主色 #1976d2、圓角 12px、灰底＋白面板、outlined 輸入框 */
+  /* 越南文的聲調字母不在 latin 子集裡，另外載 vietnamese 子集（@fontsource/roboto 5.3.0）；泰文用系統字型 */
+  @font-face { font-family: "Roboto"; font-weight: 400; font-display: swap; src: url("static/fonts/roboto-latin-400-normal.woff2") format("woff2"); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+  @font-face { font-family: "Roboto"; font-weight: 400; font-display: swap; src: url("static/fonts/roboto-vietnamese-400-normal.woff2") format("woff2"); unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB; }
+  @font-face { font-family: "Roboto"; font-weight: 500; font-display: swap; src: url("static/fonts/roboto-latin-500-normal.woff2") format("woff2"); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+  @font-face { font-family: "Roboto"; font-weight: 500; font-display: swap; src: url("static/fonts/roboto-vietnamese-500-normal.woff2") format("woff2"); unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB; }
+  @font-face { font-family: "Roboto"; font-weight: 700; font-display: swap; src: url("static/fonts/roboto-latin-700-normal.woff2") format("woff2"); unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+  @font-face { font-family: "Roboto"; font-weight: 700; font-display: swap; src: url("static/fonts/roboto-vietnamese-700-normal.woff2") format("woff2"); unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB; }
+
+  :root {
+    color-scheme: light;
+    --bg: #f5f5f5;
+    --paper: #ffffff;
+    --tonal: #f5f5f5;
+    --line: rgba(0, 0, 0, 0.12);
+    --outline: rgba(0, 0, 0, 0.23);
+    --outline-hover: rgba(0, 0, 0, 0.87);
+    --text: rgba(0, 0, 0, 0.87);
+    --text-2: rgba(0, 0, 0, 0.6);
+    --text-3: rgba(0, 0, 0, 0.38);
+    --hover: rgba(0, 0, 0, 0.04);
+    --primary: #1976d2;
+    --primary-hover: #1565c0;
+    --on-primary: #ffffff;
+    --primary-soft: rgba(25, 118, 210, 0.08);
+    --primary-selected: rgba(25, 118, 210, 0.16);
+    --error: #d32f2f;
+    --error-soft: rgba(211, 47, 47, 0.08);
+    --warning: #ed6c02;
+    --warning-soft: rgba(237, 108, 2, 0.08);
+    --disabled-bg: rgba(0, 0, 0, 0.12);
+    --disabled-text: rgba(0, 0, 0, 0.26);
+    --snack-bg: #323232;
+    --snack-text: #ffffff;
+    --overlay: rgba(0, 0, 0, 0.56);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #212121;
+      --paper: #121212;
+      --tonal: #272727;
+      --line: rgba(255, 255, 255, 0.12);
+      --outline: rgba(255, 255, 255, 0.23);
+      --outline-hover: #ffffff;
+      --text: #ffffff;
+      --text-2: rgba(255, 255, 255, 0.7);
+      --text-3: rgba(255, 255, 255, 0.5);
+      --hover: rgba(255, 255, 255, 0.08);
+      --primary: #90caf9;
+      --primary-hover: #64b5f6;
+      --on-primary: rgba(0, 0, 0, 0.87);
+      --primary-soft: rgba(144, 202, 249, 0.08);
+      --primary-selected: rgba(144, 202, 249, 0.16);
+      --error: #f44336;
+      --error-soft: rgba(244, 67, 54, 0.12);
+      --warning: #ffa726;
+      --warning-soft: rgba(255, 167, 38, 0.12);
+      --disabled-bg: rgba(255, 255, 255, 0.12);
+      --disabled-text: rgba(255, 255, 255, 0.3);
+      --snack-bg: #f5f5f5;
+      --snack-text: rgba(0, 0, 0, 0.87);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #212121; --paper: #121212; --tonal: #272727;
+    --line: rgba(255, 255, 255, 0.12); --outline: rgba(255, 255, 255, 0.23); --outline-hover: #ffffff;
+    --text: #ffffff; --text-2: rgba(255, 255, 255, 0.7); --text-3: rgba(255, 255, 255, 0.5);
+    --hover: rgba(255, 255, 255, 0.08);
+    --primary: #90caf9; --primary-hover: #64b5f6; --on-primary: rgba(0, 0, 0, 0.87);
+    --primary-soft: rgba(144, 202, 249, 0.08); --primary-selected: rgba(144, 202, 249, 0.16);
+    --error: #f44336; --error-soft: rgba(244, 67, 54, 0.12);
+    --warning: #ffa726; --warning-soft: rgba(255, 167, 38, 0.12);
+    --disabled-bg: rgba(255, 255, 255, 0.12); --disabled-text: rgba(255, 255, 255, 0.3);
+    --snack-bg: #f5f5f5; --snack-text: rgba(0, 0, 0, 0.87);
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Roboto, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", Thonburi, "Noto Sans Thai", "Leelawadee UI", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  body.has-actionbar { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
+  svg.ic { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ---- app bar（同 Cloudreve 頂列：灰底、無陰影） ---- */
+  .appbar {
+    height: 64px;
+    display: flex; align-items: center; gap: 12px;
+    padding: 0 16px;
+    max-width: 800px; margin: 0 auto;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; border-radius: 12px; padding: 4px 8px 4px 4px; margin-left: -4px; }
+  .brand-mark {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, #42a5f5, #1565c0);
+    display: grid; place-items: center; color: #fff;
+  }
+  .brand-mark svg { width: 22px; height: 22px; stroke-width: 1.8; }
+  .brand-name { font-size: 20px; font-weight: 500; letter-spacing: 0.01em; }
+  .appbar .spacer { flex: 1; }
+  .appbar-actions { display: flex; gap: 8px; min-width: 0; }
+  .brand { min-width: 0; }
+  .brand-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* 語言選單：外觀是 outlined 按鈕，上面疊一個透明的原生 <select>，點了跳出手機內建的選單 */
+  .lang { position: relative; padding: 0 12px; gap: 6px; }
+  .lang .ic { width: 20px; height: 20px; }
+  .lang select { position: absolute; inset: 0; width: 100%; opacity: 0; cursor: pointer; font-size: 16px; }
+  .lang:focus-within { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font: inherit; font-size: 14px; font-weight: 500; line-height: 1;
+    min-height: 42px; padding: 0 16px;
+    border-radius: 12px; border: 1px solid transparent;
+    cursor: pointer; text-decoration: none; white-space: nowrap;
+    transition: background-color .2s, border-color .2s, color .2s;
+  }
+  .btn-contained { background: var(--primary); color: var(--on-primary); }
+  .btn-contained:hover { background: var(--primary-hover); }
+  .btn-outlined { color: var(--text); border-color: var(--line); background: var(--paper); }
+  .btn-outlined:hover { background: var(--hover); border-color: var(--outline); }
+  .btn-text { color: var(--text-2); background: transparent; min-height: 36px; padding: 0 10px; }
+  .btn-text:hover { background: var(--hover); color: var(--text); }
+  .btn-text.danger:hover { background: var(--error-soft); color: var(--error); }
+  .btn:disabled { background: var(--disabled-bg); color: var(--disabled-text); border-color: transparent; cursor: default; }
+  :is(a, button, label, input, textarea):focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+  /* ---- 內容 ---- */
+  .wrap { max-width: 800px; margin: 0 auto; padding: 0 16px 24px; }
+  /* 越南文、泰文介面的翻譯警語（MUI Alert warning 風格） */
+  .mt-note {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px;
+    margin: 4px 0 12px; padding: 10px 12px 10px 16px;
+    background: var(--warning-soft); border: 1px solid var(--line); border-left: 4px solid var(--warning);
+    border-radius: 12px; font-size: 14px; line-height: 1.5;
+  }
+  .mt-note[hidden] { display: none; }
+  .mt-note .mt-text { flex: 1 1 220px; min-width: 0; }
+  .mt-note .mt-sub { display: block; font-size: 12px; color: var(--text-2); }
+  .mt-note .mt-switch { display: flex; gap: 4px; align-items: center; }
+  .mt-note .btn { min-height: 36px; padding: 0 10px; }
+  .mt-note .btn-outlined { background: transparent; }
+  .mt-note .mt-short { display: none; }
+  /* 按過「知道了」：縮成一行，點文字可以再展開 */
+  .mt-note.collapsed { flex-wrap: nowrap; padding: 2px 4px 2px 12px; }
+  .mt-note.collapsed .mt-full { display: none; }
+  .mt-note.collapsed .mt-short {
+    display: block; min-width: 0; padding: 8px 0; background: none; border: 0; font: inherit; font-size: 13px;
+    color: var(--text); text-align: left; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .mt-note.collapsed .mt-text { flex: 1 1 auto; display: flex; }
+
+  /* 麵包屑列（同 Cloudreve 路徑列：白底外框、圓角 12px） */
+  .crumbs {
+    display: flex; align-items: center; gap: 2px;
+    min-height: 42px; padding: 0 6px;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 12px;
+    overflow: hidden; white-space: nowrap;
+  }
+  .crumbs a, .crumbs .here {
+    display: inline-flex; align-items: center; gap: 6px; min-width: 0;
+    padding: 6px 8px; border-radius: 8px;
+    color: var(--text-2); text-decoration: none; font-size: 14px;
+  }
+  .crumbs a:hover { background: var(--hover); color: var(--text); }
+  .crumbs .here { color: var(--text); font-weight: 500; }
+  .crumbs .label { overflow: hidden; text-overflow: ellipsis; }
+  .crumbs .sep { color: var(--text-3); width: 16px; height: 16px; }
+  .crumbs > :last-child { flex-shrink: 1; min-width: 0; }
+
+  header.topbar { padding: 20px 2px 16px; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 16px; }
+  header.topbar .titles { flex: 1 1 260px; min-width: 0; }
+  header.topbar h1 { font-size: 22px; font-weight: 500; line-height: 1.3; margin: 0 0 4px; overflow-wrap: anywhere; }
+  header.topbar p { margin: 0; color: var(--text-2); font-size: 14px; }
+  .eyebrow, .rule { display: none; }
+
+  .stack { display: flex; flex-direction: column; gap: 16px; }
+
+  /* 面板（同 Cloudreve 內容區：白底、細框、圓角 12px、無陰影） */
+  .card { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px 20px; }
+  .card-label { display: flex; align-items: center; gap: 8px; min-height: 28px; margin-bottom: 12px; }
+  .card-label .idx { display: none; }
+  .card-label h2 { margin: 0; font-size: 14px; font-weight: 500; }
+  .card-label .hint { margin-left: auto; font-size: 12px; color: var(--text-2); font-variant-numeric: tabular-nums; }
+
+  /* 欄位：outlined 輸入框 */
+  .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .field + .field { margin-top: 16px; }
+  .field > label { font-size: 13px; font-weight: 500; color: var(--text-2); }
+  .field .req { color: var(--error); font-weight: 400; }
+  .field .note { color: var(--text-3); font-weight: 400; }
+  input[type="text"], input[type="date"], textarea {
+    font: inherit; font-size: 16px; color: var(--text);
+    background: transparent;
+    border: 1px solid var(--outline); border-radius: 12px;
+    padding: 12px 14px; min-height: 48px; width: 100%;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  input[type="date"] { appearance: none; -webkit-appearance: none; }
+  input[type="date"]::-webkit-date-and-time-value { text-align: left; }
+  input::placeholder, textarea::placeholder { color: var(--text-3); opacity: 1; }
+  input[type="text"]:hover, input[type="date"]:hover, textarea:hover { border-color: var(--outline-hover); }
+  input[type="text"]:focus, input[type="date"]:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: inset 0 0 0 1px var(--primary); }
+  textarea { min-height: 96px; resize: vertical; line-height: 1.6; }
+  .field.invalid input, .field.invalid textarea { border-color: var(--error); box-shadow: inset 0 0 0 1px var(--error); }
+  .field-msg { font-size: 12px; color: var(--error); margin: 0 14px; }
+  .field-msg:empty { display: none; }
+
+  .field-row { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  .field-row .field + .field { margin-top: 0; }
+  @media (min-width: 560px) { .field-row.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+  /* ---- 工程列表（同 Cloudreve 清單列） ---- */
+  .project-list { display: flex; flex-direction: column; gap: 2px; margin: 0 -8px; }
+  a.project-item {
+    display: flex; align-items: center; gap: 14px;
+    min-height: 60px; padding: 8px 12px;
+    color: var(--text); text-decoration: none; border-radius: 12px;
+  }
+  a.project-item:hover { background: var(--hover); }
+  a.project-item .folder { color: var(--text-2); width: 24px; height: 24px; }
+  .pi-text, .ct-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+  .pi-name { font-size: 15px; font-weight: 500; overflow-wrap: anywhere; }
+  .pi-meta, .ct-meta { font-size: 12px; color: var(--text-2); overflow-wrap: anywhere; }
+  .chev { flex: none; color: var(--text-3); width: 18px; height: 18px; }
+  .empty { color: var(--text-2); padding: 12px; }
+
+
+  /* ---- 表單分類（同 Cloudreve 檔案卡：淡灰底卡片＋主色方形圖示） ---- */
+  .cat-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 440px) { .cat-grid { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 720px) { .cat-grid { grid-template-columns: 1fr 1fr 1fr; } }
+  a.cat-tile {
+    display: flex; align-items: center; gap: 12px;
+    min-height: 72px; padding: 12px 14px;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 12px;
+    color: var(--text); text-decoration: none;
+    transition: background-color .15s, border-color .15s;
+  }
+  a.cat-tile:hover { background: var(--hover); }
+  .doc-badge {
+    width: 32px; height: 32px; border-radius: 8px; flex: none;
+    display: grid; place-items: center;
+    background: var(--primary-soft); color: var(--primary);
+  }
+  .doc-badge svg { width: 18px; height: 18px; }
+  a.cat-tile.has-data { border-color: color-mix(in srgb, var(--primary) 40%, transparent); }
+  a.cat-tile.has-data .doc-badge { background: var(--primary); color: var(--on-primary); }
+  a.cat-tile.has-data .ct-meta { color: var(--primary); }
+  .ct-name { font-size: 15px; font-weight: 500; }
+
+  /* ---- 照片筆數（同 Cloudreve 檔案卡：淡灰外框、白色內層） ---- */
+  #entries { display: flex; flex-direction: column; gap: 16px; }
+  .entry { background: var(--tonal); border-radius: 12px; padding: 4px 8px 8px; }
+  .entry-head { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 4px 0 8px; }
+  .entry-head .badge {
+    min-width: 24px; height: 24px; padding: 0 6px; border-radius: 6px;
+    display: grid; place-items: center;
+    background: var(--primary); color: var(--on-primary);
+    font-size: 12px; font-weight: 500; font-variant-numeric: tabular-nums;
+  }
+  .entry-head .entry-name { font-size: 14px; font-weight: 500; }
+  .entry-head .entry-remove { margin-left: auto; }
+  .entry-body { background: var(--paper); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 16px; }
+
+  label.photoslot {
+    display: flex; align-items: center; justify-content: center;
+    position: relative; min-height: 184px;
+    border: 1px dashed var(--outline); border-radius: 10px;
+    background: transparent; color: var(--text-2);
+    cursor: pointer; overflow: hidden;
+    transition: border-color .15s, background-color .15s;
+  }
+  label.photoslot:hover { border-color: var(--primary); background: var(--primary-soft); }
+  label.photoslot:has(img:not([hidden])) { border-style: solid; border-color: var(--line); background: var(--tonal); }
+  label.photoslot input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 1; }
+  label.photoslot .prompt { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 14px; padding: 20px; text-align: center; }
+  label.photoslot .prompt .ic { width: 28px; height: 28px; color: var(--primary); }
+  label.photoslot .prompt small { color: var(--text-3); font-size: 12px; }
+  label.photoslot img { width: 100%; max-height: 280px; object-fit: contain; display: block; }
+  label.photoslot .replace-tag {
+    position: absolute; left: 8px; bottom: 8px;
+    background: var(--overlay); color: #fff;
+    font-size: 12px; padding: 4px 8px; border-radius: 8px;
+  }
+  .photo-rm {
+    position: absolute; top: 8px; right: 8px; z-index: 2;
+    width: 32px; height: 32px; border-radius: 50%; border: none;
+    background: var(--overlay); color: #fff; cursor: pointer;
+    display: grid; place-items: center;
+  }
+  .photo-rm .ic { width: 18px; height: 18px; }
+  .photo-rm:hover { background: var(--error); }
+  .entry.invalid label.photoslot { border: 1px solid var(--error); background: var(--error-soft); color: var(--error); }
+  .entry.invalid label.photoslot .prompt .ic { color: var(--error); }
+
+  .add-entry {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; min-height: 48px; margin-top: 16px;
+    border-radius: 12px; border: 1px dashed var(--outline);
+    background: transparent; color: var(--text-2);
+    font: inherit; font-size: 14px; font-weight: 500; cursor: pointer;
+  }
+  .add-entry:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-soft); }
+
+  .turnstile-box { min-height: 65px; }
+
+  /* ---- 底部操作列 ---- */
+  footer.actionbar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+    background: var(--paper); border-top: 1px solid var(--line);
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  }
+  footer.actionbar .inner { max-width: 768px; margin: 0 auto; display: flex; align-items: center; gap: 16px; }
+  footer.actionbar .status { flex: 1; min-width: 0; font-size: 13px; color: var(--text-2); line-height: 1.45; }
+  footer.actionbar .status strong { color: var(--text); font-weight: 500; }
+  button.generate { min-height: 48px; padding: 0 20px; font-size: 15px; }
+  button.generate .spinner {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid currentColor; border-right-color: transparent;
+    animation: spin .7s linear infinite; display: none;
+  }
+  button.generate.busy .spinner { display: block; }
+  button.generate.busy .ic { display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---- Snackbar ---- */
+  .toast {
+    position: fixed; left: 50%; bottom: calc(92px + env(safe-area-inset-bottom)); z-index: 20;
+    transform: translateX(-50%) translateY(8px);
+    background: var(--snack-bg); color: var(--snack-text);
+    font-size: 14px; padding: 12px 16px; border-radius: 12px;
+    box-shadow: 0 3px 5px -1px rgba(0,0,0,.2), 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12);
+    opacity: 0; pointer-events: none;
+    transition: opacity .2s, transform .2s;
+    max-width: calc(100vw - 32px); text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 599px) {
+    .appbar { height: 56px; }
+    .brand-name { font-size: 18px; }
+    .card { padding: 14px 16px 16px; }
+    header.topbar { padding-top: 16px; }
+    .drive-link .label { display: none; }
+    .drive-link { padding: 0 12px; }
+
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 1.4s !important; }
+  }
+</style>
+
+<!-- 圖示（線條風格，對齊 Cloudreve 的 Fluent 圖示） -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9.5 6 6 6-6 6"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3.5 7.5a2 2 0 0 1 2-2h4l2 2.2h7a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M7 3.5h7l4.5 4.5v11a1.5 1.5 0 0 1-1.5 1.5H7A1.5 1.5 0 0 1 5.5 19V5A1.5 1.5 0 0 1 7 3.5z"/><path d="M14 3.5V8h4.5M9 12.5h6M9 16h6"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3.5 8.5a2 2 0 0 1 2-2h2l1.5-2h6l1.5 2h2a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="m6.5 6.5 11 11m0-11-11 11"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 6.5h15M9.5 6.5V5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v1.5M6.5 6.5l.8 12.1a1.5 1.5 0 0 0 1.5 1.4h6.4a1.5 1.5 0 0 0 1.5-1.4l.8-12.1"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18.5a4.5 4.5 0 0 1-.6-8.96 6 6 0 0 1 11.5 1.46A3.75 3.75 0 0 1 17.25 18.5z"/></symbol>
+  <symbol id="i-helmet" viewBox="0 0 24 24"><path d="M3.5 17.5h17M5 17.5V15a7 7 0 0 1 14 0v2.5M10 8.4V6h4v2.4M12 6v4"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.3 2.4 3.5 5.2 3.5 8.5s-1.2 6.1-3.5 8.5c-2.3-2.4-3.5-5.2-3.5-8.5s1.2-6.1 3.5-8.5z"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M12 4v10m0 0-4-4m4 4 4-4M5 15.5V18a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2.5"/></symbol>
+</svg>
+
+<header class="appbar">
+  <a class="brand" href="#/" aria-label="工地隨手記首頁" data-i18n-aria="brandHome">
+    <span class="brand-mark"><svg class="ic"><use href="#i-helmet"/></svg></span>
+    <span class="brand-name" data-i18n="brand">工地隨手記</span>
+  </a>
+  <span class="spacer"></span>
+  <div class="appbar-actions">
+    <label class="btn btn-outlined lang">
+      <svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg>
+      <span id="lang-current" aria-hidden="true">中文</span>
+      <select id="lang-select" aria-label="語言 / Language / Ngôn ngữ / ภาษา">
+        <option value="zh" lang="zh-Hant">中文</option>
+        <option value="en" lang="en">English</option>
+        <option value="vi" lang="vi">Tiếng Việt</option>
+        <option value="th" lang="th">ไทย</option>
+      </select>
+    </label>
+    {% if drive_url %}
+    <a class="btn btn-outlined drive-link" href="{{ drive_url }}" target="_blank" rel="noopener" aria-label="開啟網盤" data-i18n-aria="openDrive">
+      <svg class="ic"><use href="#i-cloud"/></svg><span class="label" data-i18n="drive">網盤</span>
+    </a>
+    {% endif %}
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- 只在越南文、泰文顯示：非母語翻譯，請以中文、英文為準 -->
+  <div class="mt-note" id="mt-note" role="note" hidden>
+    <div class="mt-text">
+      <strong class="mt-full" data-i18n="mtNote"></strong>
+      <span class="mt-sub mt-full" lang="zh-Hant">翻譯僅供參考，請以中文、英文為準。<span lang="en">Translation for reference only; the Chinese and English versions prevail.</span></span>
+      <button type="button" class="mt-short" id="mt-expand" aria-expanded="false" data-i18n="mtShort"></button>
+    </div>
+    <div class="mt-switch">
+      <button type="button" class="btn btn-outlined mt-full" id="mt-ack" data-i18n="mtAck"></button>
+      <button type="button" class="btn btn-text" data-switch-lang="zh" lang="zh-Hant">中文</button>
+      <button type="button" class="btn btn-text" data-switch-lang="en" lang="en">English</button>
+    </div>
+  </div>
+
+  <!-- ===== 第一頁：工程列表 ===== -->
+  <section class="view" id="view-home" hidden>
+    <nav class="crumbs" aria-label="目前位置" data-i18n-aria="crumbs">
+      <span class="here"><svg class="ic"><use href="#i-home"/></svg><span class="label" data-i18n="allProjects">所有工程</span></span>
+    </nav>
+    <header class="topbar">
+      <div class="titles">
+        <h1 data-i18n="homeTitle">工程列表</h1>
+        <p data-i18n="homeLead">選擇工程進入各類紀錄表單，拍照填寫後產生 Word，自動存進網盤。</p>
+      </div>
+    </header>
+
+    <div class="stack">
+      <section class="card">
+        <div class="card-label"><h2 data-i18n="projects">工程</h2><span class="hint" id="project-count"></span></div>
+        <div class="project-list" id="project-list"></div>
+      </section>
+    </div>
+  </section>
+
+  <!-- ===== 第二頁：工程底下的表單分類 ===== -->
+  <section class="view" id="view-project" hidden>
+    <nav class="crumbs" aria-label="目前位置" data-i18n-aria="crumbs">
+      <a href="#/"><svg class="ic"><use href="#i-home"/></svg><span class="label" data-i18n="allProjects">所有工程</span></a>
+      <svg class="ic sep"><use href="#i-chev"/></svg>
+      <span class="here"><span class="label" id="crumb-project"></span></span>
+    </nav>
+    <header class="topbar">
+      <div class="titles">
+        <h1 id="project-title"></h1>
+        <p id="project-sub"></p>
+      </div>
+    </header>
+
+    <div class="cat-grid" id="cat-grid"></div>
+  </section>
+
+  <!-- ===== 第三頁：紀錄表單 ===== -->
+  <section class="view" id="view-form" hidden>
+    <nav class="crumbs" aria-label="目前位置" data-i18n-aria="crumbs">
+      <a href="#/" aria-label="所有工程" data-i18n-aria="allProjects"><svg class="ic"><use href="#i-home"/></svg></a>
+      <svg class="ic sep"><use href="#i-chev"/></svg>
+      <a id="form-back" href="#/"><span class="label" id="form-back-label"></span></a>
+      <svg class="ic sep"><use href="#i-chev"/></svg>
+      <span class="here"><span class="label" id="crumb-cat"></span></span>
+    </nav>
+    <header class="topbar">
+      <div class="titles">
+        <div class="eyebrow" id="form-eyebrow"></div>
+        <h1 id="form-title"></h1>
+        <p data-i18n="formLead">拍照或選相片，逐張填寫日期、項目、位置、說明，再產生 Word（同時下載並存進網盤）。</p>
+      </div>
+    </header>
+
+    <div class="stack">
+      <section class="card">
+        <div class="card-label"><h2 data-i18n="basicInfo">基本資料</h2></div>
+        <div class="field" id="field-filename">
+          <label for="input-filename"><span data-i18n="filename">檔案名稱</span> <span class="req">*</span> <span class="note" data-i18n="filenameNote">用於檔名</span></label>
+          <input type="text" id="input-filename" placeholder="例：工審-026" maxlength="80" autocomplete="off">
+          <div class="field-msg" id="msg-filename"></div>
+        </div>
+        <div class="field">
+          <label for="input-project" data-i18n="projectTitle">工程名稱</label>
+          <input type="text" id="input-project" maxlength="100" placeholder="例：河濱公園環境改善工程" data-i18n-ph="projectTitlePh" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="input-code" data-i18n="code">編號</label>
+          <input type="text" id="input-code" maxlength="60" placeholder="例：JT-114-D-工審-026" data-i18n-ph="codePh" autocomplete="off">
+        </div>
+        <div class="field" id="field-pin"{% if not pin_enabled %} hidden{% endif %}>
+          <label for="input-pin"><span data-i18n="pin">上傳代碼</span> <span class="note" data-i18n="pinNote">管理員有設定才需要</span></label>
+          <input type="text" id="input-pin" inputmode="numeric" placeholder="沒有就留空" data-i18n-ph="pinPh" autocomplete="off">
+          <div class="field-msg" id="msg-pin"></div>
+        </div>
+        {% if turnstile_site_key %}
+        <div class="field" id="field-turnstile">
+          <label data-i18n="turnstile">人機驗證</label>
+          <div class="turnstile-box" id="turnstile"></div>
+          <div class="field-msg" id="msg-turnstile"></div>
+        </div>
+        {% endif %}
+      </section>
+
+      <section class="card">
+        <div class="card-label"><h2 id="entries-title">照片保存卡</h2><span class="hint" id="entry-count">3 筆</span></div>
+        <div id="entries"></div>
+        <button type="button" class="add-entry" id="btn-add-entry">
+          <svg class="ic"><use href="#i-plus"/></svg>
+          <span data-i18n="addEntry">新增一筆照片</span>
+        </button>
+      </section>
+    </div>
+  </section>
+</div>
+
+<footer class="actionbar" id="actionbar" hidden>
+  <div class="inner">
+    <div class="status" id="status" role="status">草稿會自動保留在此裝置上</div>
+    <button class="btn btn-contained generate" id="btn-generate">
+      <span class="spinner"></span>
+      <svg class="ic"><use href="#i-save"/></svg>
+      <span class="label-text" data-i18n="generate">產生 Word 文件</span>
+    </button>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<template id="tpl-entry">
+  <div class="entry">
+    <div class="entry-head">
+      <span class="badge"></span>
+      <span class="entry-name"></span>
+      <button type="button" class="btn btn-text danger entry-remove"><svg class="ic"><use href="#i-trash"/></svg><span data-i18n="remove">移除</span></button>
+    </div>
+    <div class="entry-body">
+      <label class="photoslot">
+        <div class="prompt">
+          <svg class="ic"><use href="#i-camera"/></svg>
+          <span data-i18n="pickPhoto">拍照 / 選擇照片</span>
+          <small data-i18n="pickPhotoNote">JPG、PNG，會自動縮小</small>
+        </div>
+        <img class="preview" alt="" hidden>
+        <span class="replace-tag" data-i18n="replacePhoto" hidden>點圖更換</span>
+        <button type="button" class="photo-rm" hidden aria-label="移除照片" data-i18n-aria="removePhoto"><svg class="ic"><use href="#i-close"/></svg></button>
+        <input type="file" class="photo-input" accept="image/*">
+      </label>
+      <div class="field-row cols-3">
+        <div class="field">
+          <label data-i18n="date">日期</label>
+          <input type="date" class="f-date">
+        </div>
+        <div class="field">
+          <label data-i18n="item">項目</label>
+          <input type="text" class="f-item" maxlength="100" placeholder="例：座椅鋼筋綁紮檢查" data-i18n-ph="itemPh">
+        </div>
+        <div class="field">
+          <label data-i18n="location">位置</label>
+          <input type="text" class="f-location" maxlength="100" placeholder="例：座椅" data-i18n-ph="locationPh">
+        </div>
+      </div>
+      <div class="field">
+        <label data-i18n="desc">說明</label>
+        <textarea class="f-desc" maxlength="2000" placeholder="例：主筋：#4-8支&#10;箍筋：#4@12.5cm" data-i18n-ph="descPh"></textarea>
+      </div>
+    </div>
+  </div>
+</template>
+
+{% if turnstile_site_key %}
+<script nonce="{{ csp_nonce }}" src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+{% endif %}
+<script nonce="{{ csp_nonce }}">
+(function () {
+  "use strict";
+
+  var els = {
+    viewHome: document.getElementById("view-home"),
+    viewProject: document.getElementById("view-project"),
+    viewForm: document.getElementById("view-form"),
+    actionbar: document.getElementById("actionbar"),
+
+    projectList: document.getElementById("project-list"),
+    projectCount: document.getElementById("project-count"),
+
+    projectTitle: document.getElementById("project-title"),
+    projectSub: document.getElementById("project-sub"),
+    catGrid: document.getElementById("cat-grid"),
+
+    formBack: document.getElementById("form-back"),
+    formBackLabel: document.getElementById("form-back-label"),
+    formEyebrow: document.getElementById("form-eyebrow"),
+    formTitle: document.getElementById("form-title"),
+    entriesTitle: document.getElementById("entries-title"),
+
+    filename: document.getElementById("input-filename"),
+    filenameField: document.getElementById("field-filename"),
+    filenameMsg: document.getElementById("msg-filename"),
+    project: document.getElementById("input-project"),
+    code: document.getElementById("input-code"),
+    pin: document.getElementById("input-pin"),
+    pinMsg: document.getElementById("msg-pin"),
+    entries: document.getElementById("entries"),
+    entryCount: document.getElementById("entry-count"),
+    addEntryBtn: document.getElementById("btn-add-entry"),
+    status: document.getElementById("status"),
+    generateBtn: document.getElementById("btn-generate"),
+    toast: document.getElementById("toast"),
+    tpl: document.getElementById("tpl-entry"),
+  };
+
+  // 第二頁的表單分類；docTitle 是 Word 文件最上面的大標題
+  var CATEGORIES = [
+    { key: "self-check", name: "自主檢查表", en: "Self-Inspection", vi: "Tự kiểm tra", th: "ตรวจสอบตนเอง" },
+    { key: "material", name: "材料進場", en: "Material Delivery", vi: "Vật liệu nhập công trường", th: "วัสดุเข้าหน้างาน" },
+    { key: "daily", name: "施工日誌", en: "Daily Log", vi: "Nhật ký thi công", th: "บันทึกการก่อสร้างประจำวัน" },
+    { key: "spot-check", name: "抽查紀錄表", en: "Spot Check", vi: "Kiểm tra đột xuất", th: "บันทึกการสุ่มตรวจ" },
+    { key: "attendance", name: "出勤紀錄", en: "Attendance", vi: "Chấm công", th: "บันทึกการเข้างาน" },
+    { key: "defect", name: "缺失改善", en: "Defect Correction", vi: "Khắc phục lỗi", th: "การแก้ไขข้อบกพร่อง" },
+    { key: "photo", name: "施工照片", en: "Site Photos", vi: "Ảnh thi công", th: "รูปถ่ายการก่อสร้าง", docTitle: "工程施工照片保存卡" },
+  ];
+
+  // ---------- 中文／English／Tiếng Việt／ไทย ----------
+  // 只翻介面；工程名稱（管理者取的）和產生的 Word 內容照舊是中文。
+  // 越南文、泰文是非母語翻譯，請母語人士校對後直接改這裡（伺服器的錯誤訊息在 app/messages.py）
+  var LANG_KEY = "site-log-lang";
+  var I18N = {
+    zh: {
+      brand: "工地隨手記", brandHome: "工地隨手記首頁", drive: "網盤", openDrive: "開啟網盤",
+      short: "中文", mtNote: "", mtShort: "", mtAck: "知道了",
+      crumbs: "目前位置", allProjects: "所有工程", homeTitle: "工程列表",
+      homeLead: "選擇工程進入各類紀錄表單，拍照填寫後產生 Word，自動存進網盤。",
+      projects: "工程", projectCount: "{n} 項", noProjects: "目前沒有工程，請聯絡管理者在管理頁加入。",
+      formsInProgress: "{n} 類表單已有紀錄", noRecords: "尚無紀錄", chooseForm: "選擇要填寫的紀錄表單",
+      draftCount: "草稿 {n} 筆", notStarted: "尚未填寫",
+      formLead: "拍照或選相片，逐張填寫日期、項目、位置、說明，再產生 Word（同時下載並存進網盤）。",
+      basicInfo: "基本資料", filename: "檔案名稱", filenameNote: "用於檔名", filenamePh: "例：{cat}-001",
+      projectTitle: "工程名稱", projectTitlePh: "例：河濱公園環境改善工程",
+      code: "編號", codePh: "例：JT-114-D-工審-026",
+      pin: "上傳代碼", pinNote: "管理員有設定才需要", pinPh: "沒有就留空", turnstile: "人機驗證",
+      photoCards: "照片保存卡", catPhotos: "{cat}照片", entryCount: "{n} 筆", addEntry: "新增一筆照片",
+      entryName: "照片 {n}", removeEntry: "移除第 {n} 筆", remove: "移除",
+      pickPhoto: "拍照 / 選擇照片", pickPhotoNote: "JPG、PNG，會自動縮小", replacePhoto: "點圖更換", removePhoto: "移除照片",
+      date: "日期", item: "項目", itemPh: "例：座椅鋼筋綁紮檢查", location: "位置", locationPh: "例：座椅",
+      desc: "說明", descPh: "例：主筋：#4-8支\n箍筋：#4@12.5cm",
+      generate: "產生 Word 文件",
+      draftKept: "草稿會自動保留在此裝置上", draftSaved: "草稿已自動儲存在此裝置（不含照片）",
+      addingPhoto: "處理中：正在加入照片…", addPhotoFailed: "加入失敗：{msg}",
+      tooManyPhotos: "一份最多 {n} 張照片，請分成兩份送出",
+      photoUnreadable: "無法讀取這張照片", photoConvertFailed: "相片轉換失敗",
+      filenameRequired: "請輸入檔案名稱，將作為下載檔名", needEntry: "請至少新增一筆照片資料",
+      verifyFirst: "請先完成人機驗證", uploading: "正在上傳照片、產生 Word…",
+      serverStatus: "伺服器回應 {n}", networkError: "網路連線失敗",
+      doneBoth: "<strong>已完成</strong> · Word 和 PDF 已存進網盤，PDF 已下載到此裝置",
+      donePdfNotSaved: "<strong>已完成</strong> · Word 已存進網盤，PDF 只下載到此裝置（沒存進網盤）",
+      doneNoPdf: "<strong>已完成</strong> · 已存進網盤並下載 Word（這次沒有產生 PDF）",
+      done: "<strong>已完成</strong> · 已存進網盤並下載到此裝置",
+      savedToast: "已存進網盤：{name}", notDone: "未完成", notDoneToast: "未完成：{msg}",
+    },
+    en: {
+      brand: "Site Log", brandHome: "Site Log home", drive: "Drive", openDrive: "Open drive",
+      short: "EN", mtNote: "", mtShort: "", mtAck: "Got it",
+      crumbs: "Breadcrumb", allProjects: "All projects", homeTitle: "Projects",
+      homeLead: "Choose a project and a form, take photos and fill in the details. A document is created and saved to the company drive.",
+      projects: "Projects", projectCount: "{n}", noProjects: "No projects yet. Please ask your administrator to add one.",
+      formsInProgress: "Forms started: {n}", noRecords: "No records yet", chooseForm: "Choose a form to fill in",
+      draftCount: "Draft: {n}", notStarted: "Not started",
+      formLead: "Take or choose a photo for each record, add the date, item, location and notes, then create the document (it downloads and is saved to the drive).",
+      basicInfo: "Basic info", filename: "File name", filenameNote: "used in the file name", filenamePh: "e.g. {cat}-001",
+      projectTitle: "Project name", projectTitlePh: "e.g. Riverside Park Renovation",
+      code: "No.", codePh: "e.g. JT-114-D-026",
+      pin: "Upload code", pinNote: "only if your administrator set one", pinPh: "Leave blank if none", turnstile: "Human verification",
+      photoCards: "Photo records", catPhotos: "{cat} photos", entryCount: "Records: {n}", addEntry: "Add a photo record",
+      entryName: "Photo {n}", removeEntry: "Remove record {n}", remove: "Remove",
+      pickPhoto: "Take or choose a photo", pickPhotoNote: "JPG or PNG, resized automatically", replacePhoto: "Tap to replace", removePhoto: "Remove photo",
+      date: "Date", item: "Item", itemPh: "e.g. Seat rebar inspection", location: "Location", locationPh: "e.g. Seating area",
+      desc: "Notes", descPh: "e.g. Main bars: #4 x 8\nStirrups: #4 @ 12.5 cm",
+      generate: "Create document",
+      draftKept: "Your draft is kept on this device", draftSaved: "Draft saved on this device (photos not included)",
+      addingPhoto: "Adding photo…", addPhotoFailed: "Could not add photo: {msg}",
+      tooManyPhotos: "Up to {n} photos per submission. Please split it into two.",
+      photoUnreadable: "This photo could not be read", photoConvertFailed: "Could not convert the photo",
+      filenameRequired: "Please enter a file name; it is used for the download", needEntry: "Please add at least one photo record",
+      verifyFirst: "Please complete the human verification first", uploading: "Uploading photos and creating the document…",
+      serverStatus: "Server error {n}", networkError: "Network connection failed",
+      doneBoth: "<strong>Done</strong> · Word and PDF saved to the drive; PDF downloaded to this device",
+      donePdfNotSaved: "<strong>Done</strong> · Word saved to the drive; PDF downloaded to this device only",
+      doneNoPdf: "<strong>Done</strong> · Saved to the drive and Word downloaded (no PDF this time)",
+      done: "<strong>Done</strong> · Saved to the drive and downloaded to this device",
+      savedToast: "Saved to the drive: {name}", notDone: "Not sent", notDoneToast: "Not sent: {msg}",
+    },
+    vi: {
+      short: "VI",
+      mtNote: "Bản dịch tiếng Việt có thể chưa chính xác. Nếu không chắc, vui lòng xem bản tiếng Trung hoặc tiếng Anh.",
+      mtShort: "⚠ Bản dịch chỉ để tham khảo", mtAck: "Đã hiểu",
+      brand: "Nhật ký công trường", brandHome: "Trang chủ Nhật ký công trường", drive: "Ổ lưu trữ", openDrive: "Mở ổ lưu trữ",
+      crumbs: "Vị trí hiện tại", allProjects: "Tất cả công trình", homeTitle: "Danh sách công trình",
+      homeLead: "Chọn công trình và loại biểu mẫu, chụp ảnh và điền thông tin. Tài liệu sẽ được tạo và tự động lưu vào ổ lưu trữ của công ty.",
+      projects: "Công trình", projectCount: "{n}", noProjects: "Chưa có công trình nào. Vui lòng liên hệ quản lý để thêm.",
+      formsInProgress: "Biểu mẫu đã bắt đầu: {n}", noRecords: "Chưa có dữ liệu", chooseForm: "Chọn biểu mẫu cần điền",
+      draftCount: "Bản nháp: {n}", notStarted: "Chưa điền",
+      formLead: "Chụp hoặc chọn ảnh cho từng mục, điền ngày, hạng mục, vị trí và ghi chú, sau đó tạo tài liệu (tài liệu sẽ được tải xuống và lưu vào ổ lưu trữ).",
+      basicInfo: "Thông tin cơ bản", filename: "Tên tệp", filenameNote: "dùng làm tên tệp", filenamePh: "VD: {cat}-001",
+      projectTitle: "Tên công trình", projectTitlePh: "VD: Cải tạo công viên ven sông",
+      code: "Số hiệu", codePh: "VD: JT-114-D-026",
+      pin: "Mã tải lên", pinNote: "chỉ khi quản lý có cài đặt", pinPh: "Không có thì để trống", turnstile: "Xác minh",
+      photoCards: "Phiếu ảnh", catPhotos: "Ảnh {cat}", entryCount: "Số mục: {n}", addEntry: "Thêm một mục ảnh",
+      entryName: "Ảnh {n}", removeEntry: "Xóa mục {n}", remove: "Xóa",
+      pickPhoto: "Chụp hoặc chọn ảnh", pickPhotoNote: "JPG hoặc PNG, tự động thu nhỏ", replacePhoto: "Chạm để thay ảnh", removePhoto: "Xóa ảnh",
+      date: "Ngày", item: "Hạng mục", itemPh: "VD: Kiểm tra buộc thép ghế ngồi", location: "Vị trí", locationPh: "VD: Khu ghế ngồi",
+      desc: "Ghi chú", descPh: "VD: Thép chủ: #4 x 8\nThép đai: #4 @ 12.5 cm",
+      generate: "Tạo tài liệu",
+      draftKept: "Bản nháp được lưu trên thiết bị này", draftSaved: "Đã lưu bản nháp trên thiết bị này (không gồm ảnh)",
+      addingPhoto: "Đang thêm ảnh…", addPhotoFailed: "Không thêm được ảnh: {msg}",
+      tooManyPhotos: "Mỗi lần gửi tối đa {n} ảnh. Vui lòng chia thành hai lần.",
+      photoUnreadable: "Không đọc được ảnh này", photoConvertFailed: "Không chuyển đổi được ảnh",
+      filenameRequired: "Vui lòng nhập tên tệp, dùng làm tên tệp tải xuống", needEntry: "Vui lòng thêm ít nhất một mục ảnh",
+      verifyFirst: "Vui lòng hoàn tất xác minh trước", uploading: "Đang tải ảnh lên và tạo tài liệu…",
+      serverStatus: "Lỗi máy chủ {n}", networkError: "Lỗi kết nối mạng",
+      doneBoth: "<strong>Hoàn tất</strong> · Đã lưu Word và PDF vào ổ lưu trữ; PDF đã tải về thiết bị này",
+      donePdfNotSaved: "<strong>Hoàn tất</strong> · Đã lưu Word vào ổ lưu trữ; PDF chỉ tải về thiết bị này",
+      doneNoPdf: "<strong>Hoàn tất</strong> · Đã lưu vào ổ lưu trữ và tải Word về (lần này không có PDF)",
+      done: "<strong>Hoàn tất</strong> · Đã lưu vào ổ lưu trữ và tải về thiết bị này",
+      savedToast: "Đã lưu vào ổ lưu trữ: {name}", notDone: "Chưa gửi", notDoneToast: "Chưa gửi: {msg}",
+    },
+    th: {
+      short: "ไทย",
+      mtNote: "คำแปลภาษาไทยอาจไม่ถูกต้องทั้งหมด หากไม่แน่ใจ กรุณายึดฉบับภาษาจีนหรือภาษาอังกฤษเป็นหลัก",
+      mtShort: "⚠ คำแปลใช้อ้างอิงเท่านั้น", mtAck: "รับทราบ",
+      brand: "บันทึกหน้างาน", brandHome: "หน้าแรก บันทึกหน้างาน", drive: "ไดรฟ์", openDrive: "เปิดไดรฟ์",
+      crumbs: "ตำแหน่งปัจจุบัน", allProjects: "โครงการทั้งหมด", homeTitle: "รายการโครงการ",
+      homeLead: "เลือกโครงการและแบบฟอร์ม ถ่ายรูปและกรอกข้อมูล ระบบจะสร้างเอกสารและบันทึกลงไดรฟ์ของบริษัทโดยอัตโนมัติ",
+      projects: "โครงการ", projectCount: "{n}", noProjects: "ยังไม่มีโครงการ กรุณาติดต่อผู้ดูแลเพื่อเพิ่มโครงการ",
+      formsInProgress: "แบบฟอร์มที่เริ่มแล้ว: {n}", noRecords: "ยังไม่มีข้อมูล", chooseForm: "เลือกแบบฟอร์มที่ต้องการกรอก",
+      draftCount: "ฉบับร่าง: {n}", notStarted: "ยังไม่ได้กรอก",
+      formLead: "ถ่ายหรือเลือกรูปสำหรับแต่ละรายการ กรอกวันที่ รายการ ตำแหน่ง และหมายเหตุ แล้วสร้างเอกสาร (เอกสารจะดาวน์โหลดและบันทึกลงไดรฟ์)",
+      basicInfo: "ข้อมูลพื้นฐาน", filename: "ชื่อไฟล์", filenameNote: "ใช้เป็นชื่อไฟล์", filenamePh: "เช่น {cat}-001",
+      projectTitle: "ชื่อโครงการ", projectTitlePh: "เช่น ปรับปรุงสวนสาธารณะริมแม่น้ำ",
+      code: "เลขที่", codePh: "เช่น JT-114-D-026",
+      pin: "รหัสอัปโหลด", pinNote: "เฉพาะเมื่อผู้ดูแลตั้งค่าไว้", pinPh: "ถ้าไม่มีให้เว้นว่าง", turnstile: "การยืนยัน",
+      photoCards: "บัตรบันทึกรูปภาพ", catPhotos: "รูป{cat}", entryCount: "จำนวนรายการ: {n}", addEntry: "เพิ่มรายการรูปภาพ",
+      entryName: "รูปที่ {n}", removeEntry: "ลบรายการที่ {n}", remove: "ลบ",
+      pickPhoto: "ถ่ายหรือเลือกรูป", pickPhotoNote: "JPG หรือ PNG ย่อขนาดอัตโนมัติ", replacePhoto: "แตะเพื่อเปลี่ยนรูป", removePhoto: "ลบรูป",
+      date: "วันที่", item: "รายการ", itemPh: "เช่น ตรวจการผูกเหล็กที่นั่ง", location: "ตำแหน่ง", locationPh: "เช่น บริเวณที่นั่ง",
+      desc: "หมายเหตุ", descPh: "เช่น เหล็กหลัก: #4 x 8\nเหล็กปลอก: #4 @ 12.5 ซม.",
+      generate: "สร้างเอกสาร",
+      draftKept: "ฉบับร่างจะเก็บไว้ในอุปกรณ์นี้", draftSaved: "บันทึกฉบับร่างในอุปกรณ์นี้แล้ว (ไม่รวมรูป)",
+      addingPhoto: "กำลังเพิ่มรูป…", addPhotoFailed: "เพิ่มรูปไม่สำเร็จ: {msg}",
+      tooManyPhotos: "ส่งได้ครั้งละไม่เกิน {n} รูป กรุณาแบ่งส่งเป็นสองครั้ง",
+      photoUnreadable: "ไม่สามารถอ่านรูปนี้ได้", photoConvertFailed: "แปลงรูปไม่สำเร็จ",
+      filenameRequired: "กรุณากรอกชื่อไฟล์ ใช้เป็นชื่อไฟล์ที่ดาวน์โหลด", needEntry: "กรุณาเพิ่มรายการรูปภาพอย่างน้อยหนึ่งรายการ",
+      verifyFirst: "กรุณายืนยันก่อน", uploading: "กำลังอัปโหลดรูปและสร้างเอกสาร…",
+      serverStatus: "เซิร์ฟเวอร์ผิดพลาด {n}", networkError: "เชื่อมต่อเครือข่ายไม่สำเร็จ",
+      doneBoth: "<strong>เสร็จแล้ว</strong> · บันทึก Word และ PDF ลงไดรฟ์แล้ว ดาวน์โหลด PDF ลงอุปกรณ์นี้แล้ว",
+      donePdfNotSaved: "<strong>เสร็จแล้ว</strong> · บันทึก Word ลงไดรฟ์แล้ว PDF ดาวน์โหลดลงอุปกรณ์นี้เท่านั้น",
+      doneNoPdf: "<strong>เสร็จแล้ว</strong> · บันทึกลงไดรฟ์และดาวน์โหลด Word แล้ว (ครั้งนี้ไม่มี PDF)",
+      done: "<strong>เสร็จแล้ว</strong> · บันทึกลงไดรฟ์และดาวน์โหลดลงอุปกรณ์นี้แล้ว",
+      savedToast: "บันทึกลงไดรฟ์แล้ว: {name}", notDone: "ยังไม่ได้ส่ง", notDoneToast: "ยังไม่ได้ส่ง: {msg}",
+    },
+  };
+  var LANGS = ["zh", "en", "vi", "th"];
+  var HTML_LANG = { zh: "zh-Hant", en: "en", vi: "vi", th: "th" };
+  var TURNSTILE_LANG = { zh: "zh-tw", en: "en", vi: "vi", th: "th" };
+  var lang = (function () {
+    var saved = null;
+    try { saved = localStorage.getItem(LANG_KEY); } catch (e) { /* ignore */ }
+    if (LANGS.indexOf(saved) >= 0) return saved;
+    // 沒選過就看手機語言：中文、越南文、泰文就用該語言，其他一律英文
+    var prefs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "zh"];
+    var code = String(prefs[0]).slice(0, 2).toLowerCase();
+    return LANGS.indexOf(code) >= 0 ? code : "en";
+  })();
+
+  function t(key, vars) {
+    var text = I18N[lang][key];
+    if (text == null) text = I18N.zh[key];
+    if (vars) text = text.replace(/\{(\w+)\}/g, function (m, k) { return vars[k] != null ? vars[k] : m; });
+    return text;
+  }
+  function catName(cat) { return lang === "zh" ? cat.name : (cat[lang] || cat.en); }
+  // 把 data-i18n（文字）、data-i18n-ph（placeholder）、data-i18n-aria（aria-label）換成目前語言
+  function applyI18n(root) {
+    root.querySelectorAll("[data-i18n]").forEach(function (n) { n.textContent = t(n.dataset.i18n); });
+    root.querySelectorAll("[data-i18n-ph]").forEach(function (n) { n.placeholder = t(n.dataset.i18nPh); });
+    root.querySelectorAll("[data-i18n-aria]").forEach(function (n) { n.setAttribute("aria-label", t(n.dataset.i18nAria)); });
+  }
+  function applyLang() {
+    document.documentElement.lang = HTML_LANG[lang];
+    applyI18n(document);
+    applyI18n(els.tpl.content);
+    document.getElementById("lang-select").value = lang;
+    document.getElementById("lang-current").textContent = t("short");
+    document.getElementById("mt-note").hidden = lang === "zh" || lang === "en";
+  }
+
+  // 翻譯警語：按「知道了」之後這支手機都縮成一行（點那一行可以再展開）
+  var MT_ACK_KEY = "site-log-mt-ack";
+  function setNoteCollapsed(collapsed) {
+    document.getElementById("mt-note").classList.toggle("collapsed", collapsed);
+    document.getElementById("mt-expand").setAttribute("aria-expanded", String(!collapsed));
+  }
+  (function initNote() {
+    var acked = false;
+    try { acked = localStorage.getItem(MT_ACK_KEY) === "1"; } catch (e) { /* ignore */ }
+    setNoteCollapsed(acked);
+    document.getElementById("mt-ack").addEventListener("click", function () {
+      try { localStorage.setItem(MT_ACK_KEY, "1"); } catch (e) { /* ignore */ }
+      setNoteCollapsed(true);
+    });
+    document.getElementById("mt-expand").addEventListener("click", function () { setNoteCollapsed(false); });
+  })();
+
+  // 工程清單由管理者在 /admin 維護；存一份在手機上，連不到伺服器時照樣顯示。
+  // 舊版存在手機上的自己加的工程（site-log-projects-v1）不再顯示，資料留著不刪
+  var PROJECTS_CACHE_KEY = "site-log-shared-projects-v1";
+  var PROJECTS_URL = "projects";
+  var DRAFT_PREFIX = "site-log-draft-v3:";
+  var PIN_KEY = "site-log-pin";
+  // form-app 的 POST /submit：伺服器產生 Word、存進網盤，再把 Word 傳回來下載
+  var API_URL = "submit";
+  var TURNSTILE_SITE_KEY = {{ turnstile_site_key|tojson }};
+  var MAX_PHOTOS = {{ max_photos|int }};
+  var photoMap = new Map(); // entryId -> { blob, previewUrl, width, height }（只存在記憶體，重新整理會消失）
+  var toastTimer = null;
+  var projects = []; // 管理者維護的工程清單（唯讀）
+  var current = null; // 目前開啟的表單 { project, cat }
+
+  function pad2(n) { return String(n).padStart(2, "0"); }
+  function todayISO() {
+    var d = new Date();
+    return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
+  }
+  function uid(prefix) { return (prefix || "e") + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+
+  function showToast(msg) {
+    els.toast.textContent = msg;
+    els.toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { els.toast.classList.remove("show"); }, 3200);
+  }
+  function setStatus(html) { els.status.innerHTML = html; }
+
+  // ---------- storage ----------
+  function storeGet(key) {
+    try {
+      var raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+  function storeSet(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); return true; } catch (e) { return false; }
+  }
+
+  // ---------- projects ----------
+  function findProject(id) {
+    for (var i = 0; i < projects.length; i++) if (projects[i].id === id) return projects[i];
+    return null;
+  }
+  function findCat(key) {
+    for (var i = 0; i < CATEGORIES.length; i++) if (CATEGORIES[i].key === key) return CATEGORIES[i];
+    return null;
+  }
+  function draftKey(pid, catKey) { return DRAFT_PREFIX + pid + ":" + catKey; }
+  function projectHref(p) { return "#/p/" + encodeURIComponent(p.id); }
+  function formHref(p, cat) { return projectHref(p) + "/" + cat.key; }
+
+
+  function setProjects(list) {
+    projects = list.map(function (p) { return { id: p.id, name: p.name, title: p.title || "" }; });
+  }
+  // 回傳 Promise；失敗就沿用手機上存的那份
+  function loadProjects() {
+    var cached = storeGet(PROJECTS_CACHE_KEY);
+    if (Array.isArray(cached)) setProjects(cached);
+    return fetch(PROJECTS_URL, { credentials: "same-origin" })
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (list) {
+        if (!Array.isArray(list)) return;
+        setProjects(list);
+        storeSet(PROJECTS_CACHE_KEY, list);
+      })
+      .catch(function () { /* 離線：用快取 */ });
+  }
+
+  // 有內容（照片或文字）的筆數，日期會自動帶今天所以不算
+  function filledCount(pid, catKey) {
+    var draft = storeGet(draftKey(pid, catKey));
+    if (!draft || !draft.entries) return 0;
+    return draft.entries.filter(function (e) {
+      return (e.id && photoMap.has(e.id)) || e.item || e.location || e.desc;
+    }).length;
+  }
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  // 引用頁首 <symbol> 的圖示，例：icon("i-folder", "folder")
+  function icon(id, cls) {
+    var ns = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("class", "ic" + (cls ? " " + cls : ""));
+    svg.setAttribute("aria-hidden", "true");
+    var use = document.createElementNS(ns, "use");
+    use.setAttribute("href", "#" + id);
+    svg.appendChild(use);
+    return svg;
+  }
+  function chevron() { return icon("i-chev", "chev"); }
+
+  // ---------- 第一頁 ----------
+  function renderHome() {
+    els.projectList.innerHTML = "";
+    els.projectCount.textContent = t("projectCount", { n: projects.length });
+    if (!projects.length) {
+      els.projectList.appendChild(el("div", "empty", t("noProjects")));
+    }
+    projects.forEach(function (p, i) {
+      var a = el("a", "project-item");
+      a.href = projectHref(p);
+      var text = el("span", "pi-text");
+      text.appendChild(el("span", "pi-name", p.name));
+      var used = CATEGORIES.filter(function (c) { return filledCount(p.id, c.key) > 0; }).length;
+      var meta = p.title && p.title !== p.name ? p.title + " · " : "";
+      meta += used ? t("formsInProgress", { n: used }) : t("noRecords");
+      text.appendChild(el("span", "pi-meta", meta));
+      a.appendChild(icon("i-folder", "folder"));
+      a.appendChild(text);
+      a.appendChild(chevron());
+      els.projectList.appendChild(a);
+    });
+  }
+
+  // ---------- 第二頁 ----------
+  function renderProject(p) {
+    els.projectTitle.textContent = p.name;
+    document.getElementById("crumb-project").textContent = p.name;
+    els.projectSub.textContent = p.title && p.title !== p.name ? p.title : t("chooseForm");
+    els.catGrid.innerHTML = "";
+    CATEGORIES.forEach(function (cat, i) {
+      var n = filledCount(p.id, cat.key);
+      var a = el("a", "cat-tile" + (n ? " has-data" : ""));
+      a.href = formHref(p, cat);
+      var text = el("span", "ct-text");
+      text.appendChild(el("span", "ct-name", catName(cat)));
+      text.appendChild(el("span", "ct-meta", n ? t("draftCount", { n: n }) : t("notStarted")));
+      var badge = el("span", "doc-badge");
+      badge.appendChild(icon("i-doc"));
+      a.appendChild(badge);
+      a.appendChild(text);
+      a.appendChild(chevron());
+      els.catGrid.appendChild(a);
+    });
+  }
+
+  // ---------- 第三頁：draft persistence (text fields only, no photos) ----------
+  function saveDraft() {
+    if (!current) return;
+    var entries = Array.prototype.map.call(els.entries.querySelectorAll(".entry"), function (node) {
+      return {
+        id: node.dataset.id,
+        date: node.querySelector(".f-date").value,
+        item: node.querySelector(".f-item").value,
+        location: node.querySelector(".f-location").value,
+        desc: node.querySelector(".f-desc").value,
+      };
+    });
+    var ok = storeSet(draftKey(current.project.id, current.cat.key), {
+      filename: els.filename.value,
+      project: els.project.value,
+      code: els.code.value,
+      entries: entries,
+    });
+    if (ok) setStatus(t("draftSaved"));
+  }
+  var saveTimer = null;
+  function scheduleSave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveDraft, 500); }
+  function flushSave() {
+    if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; saveDraft(); }
+  }
+
+  // ---------- entries ----------
+  function forgetPhoto(id) {
+    var old = id && photoMap.get(id);
+    if (old) URL.revokeObjectURL(old.previewUrl);
+    if (id) photoMap.delete(id);
+  }
+
+  function renumberEntries() {
+    var nodes = els.entries.querySelectorAll(".entry");
+    els.entryCount.textContent = t("entryCount", { n: nodes.length });
+    nodes.forEach(function (node, i) {
+      node.querySelector(".badge").textContent = pad2(i + 1);
+      node.querySelector(".entry-name").textContent = t("entryName", { n: i + 1 });
+      var rmBtn = node.querySelector(".entry-remove");
+      rmBtn.setAttribute("aria-label", t("removeEntry", { n: i + 1 }));
+      rmBtn.style.visibility = nodes.length > 1 ? "visible" : "hidden";
+    });
+  }
+
+  function setSlotPhoto(node, rec) {
+    var slot = node.querySelector(".photoslot");
+    slot.querySelector(".prompt").hidden = true;
+    var img = slot.querySelector(".preview");
+    img.src = rec.previewUrl;
+    img.hidden = false;
+    slot.querySelector(".replace-tag").hidden = false;
+    slot.querySelector(".photo-rm").hidden = false;
+    node.classList.remove("invalid");
+  }
+  function clearSlotPhoto(node) {
+    var slot = node.querySelector(".photoslot");
+    slot.querySelector(".prompt").hidden = false;
+    var img = slot.querySelector(".preview");
+    img.hidden = true;
+    img.removeAttribute("src");
+    slot.querySelector(".replace-tag").hidden = true;
+    slot.querySelector(".photo-rm").hidden = true;
+  }
+
+  function wireEntry(node, id) {
+    var fileInput = node.querySelector(".photo-input");
+    fileInput.addEventListener("change", function (e) {
+      var f = e.target.files[0];
+      e.target.value = "";
+      if (!f) return;
+      setStatus(t("addingPhoto"));
+      processFile(f).then(function (rec) {
+        forgetPhoto(id);
+        photoMap.set(id, rec);
+        setSlotPhoto(node, rec);
+        setStatus(t("draftSaved"));
+      }).catch(function (err) {
+        showToast(t("addPhotoFailed", { msg: err.message }));
+      });
+    });
+
+    node.querySelector(".photo-rm").addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      forgetPhoto(id);
+      clearSlotPhoto(node);
+    });
+
+    node.querySelector(".entry-remove").addEventListener("click", function () {
+      forgetPhoto(id);
+      node.remove();
+      renumberEntries();
+      scheduleSave();
+    });
+
+    ["f-date", "f-item", "f-location", "f-desc"].forEach(function (cls) {
+      node.querySelector("." + cls).addEventListener("input", scheduleSave);
+    });
+  }
+
+  function addEntry(prefill) {
+    var node = els.tpl.content.firstElementChild.cloneNode(true);
+    var id = (prefill && prefill.id) || uid();
+    node.dataset.id = id;
+    node.querySelector(".f-date").value = (prefill && prefill.date) || todayISO();
+    if (prefill) {
+      node.querySelector(".f-item").value = prefill.item || "";
+      node.querySelector(".f-location").value = prefill.location || "";
+      node.querySelector(".f-desc").value = prefill.desc || "";
+    }
+    wireEntry(node, id);
+    // 同一次開啟期間拍過的照片，切換頁面回來後還在
+    if (photoMap.has(id)) setSlotPhoto(node, photoMap.get(id));
+    els.entries.appendChild(node);
+    renumberEntries();
+    return node;
+  }
+
+  els.addEntryBtn.addEventListener("click", function () {
+    if (els.entries.querySelectorAll(".entry").length >= MAX_PHOTOS) {
+      showToast(t("tooManyPhotos", { n: MAX_PHOTOS }));
+      return;
+    }
+    addEntry();
+    scheduleSave();
+  });
+
+  function openForm(p, cat) {
+    current = { project: p, cat: cat };
+    els.formBack.href = projectHref(p);
+    els.formBackLabel.textContent = p.name;
+    // 眉標放另一種語言的表單名稱，方便跟說中文／英文的人對照
+    els.formEyebrow.textContent = p.name + " · " + (lang === "zh" ? cat.en.toUpperCase() : cat.name);
+    els.formTitle.textContent = catName(cat);
+    document.getElementById("crumb-cat").textContent = catName(cat);
+    els.entriesTitle.textContent = cat.key === "photo" ? t("photoCards") : t("catPhotos", { cat: catName(cat) });
+
+    var draft = storeGet(draftKey(p.id, cat.key));
+    els.filename.value = (draft && draft.filename) || "";
+    els.filename.placeholder = t("filenamePh", { cat: catName(cat) });
+    els.project.value = (draft && draft.project) || p.title || "";
+    els.code.value = (draft && draft.code) || "";
+    els.filenameField.classList.remove("invalid");
+    els.filenameMsg.textContent = "";
+    els.pinMsg.textContent = "";
+
+    els.entries.innerHTML = "";
+    var seed = (draft && draft.entries && draft.entries.length) ? draft.entries : [{}, {}, {}];
+    seed.forEach(function (e) { addEntry(e); });
+    if (!draft) saveDraft(); // 讓新產生的筆數 id 固定下來
+    setStatus(t("draftKept"));
+  }
+
+  (function initFormFields() {
+    [els.filename, els.project, els.code].forEach(function (el) {
+      el.addEventListener("input", scheduleSave);
+    });
+    try {
+      els.pin.value = localStorage.getItem(PIN_KEY) || "";
+    } catch (e) { /* storage unavailable */ }
+    els.pin.addEventListener("input", function () {
+      try { localStorage.setItem(PIN_KEY, els.pin.value); } catch (e) { /* ignore */ }
+    });
+  })();
+
+  // ---------- router ----------
+  function parseRoute() {
+    var parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
+    try { parts = parts.map(decodeURIComponent); } catch (e) { return {}; }
+    if (parts[0] === "p" && parts[1]) return { pid: parts[1], cat: parts[2] || null };
+    return {};
+  }
+
+  function showView(name) {
+    els.viewHome.hidden = name !== "home";
+    els.viewProject.hidden = name !== "project";
+    els.viewForm.hidden = name !== "form";
+    els.actionbar.hidden = name !== "form";
+    document.body.classList.toggle("has-actionbar", name === "form");
+  }
+
+  function render() {
+    flushSave();
+    current = null;
+    var r = parseRoute();
+    var p = r.pid ? findProject(r.pid) : null;
+    if (r.pid && !p) { location.replace("#/"); return; }
+    var cat = r.cat ? findCat(r.cat) : null;
+    if (p && r.cat && !cat) { location.replace(projectHref(p)); return; }
+
+    if (p && cat) {
+      openForm(p, cat);
+      showView("form");
+      renderTurnstile(); // 表單顯示後才渲染，隱藏時渲染元件會看不見
+      document.title = catName(cat) + "｜" + p.name;
+    } else if (p) {
+      renderProject(p);
+      showView("project");
+      document.title = p.name + "｜" + t("brand");
+    } else {
+      renderHome();
+      showView("home");
+      document.title = t("brand");
+    }
+    window.scrollTo(0, 0);
+  }
+
+  window.addEventListener("hashchange", render);
+  window.addEventListener("pagehide", flushSave);
+
+  applyLang();
+  function switchLang(next) {
+    lang = next;
+    try { localStorage.setItem(LANG_KEY, lang); } catch (e) { /* ignore */ }
+    applyLang();
+    // 重畫目前這頁（表單會從草稿重建，照片還在記憶體裡），停在原本的位置
+    var y = window.scrollY;
+    resetTurnstileLanguage();
+    render();
+    window.scrollTo(0, y);
+  }
+  document.getElementById("lang-select").addEventListener("change", function (e) { switchLang(e.target.value); });
+  document.querySelectorAll("[data-switch-lang]").forEach(function (btn) {
+    btn.addEventListener("click", function () { switchLang(btn.dataset.switchLang); });
+  });
+  // 手機上已經有工程清單的快取就先畫，不用等網路；第一次用才等清單回來（不然網址裡的共用工程會找不到）
+  if (Array.isArray(storeGet(PROJECTS_CACHE_KEY))) {
+    loadProjects().then(function () { if (!current) render(); });
+    render();
+  } else {
+    loadProjects().then(render);
+  }
+
+  // ---------- photo capture + downscale ----------
+  var MAX_DIM = 1600;
+  var JPEG_QUALITY = 0.85;
+
+  function loadBitmap(file) {
+    if (window.createImageBitmap) {
+      return createImageBitmap(file).catch(function () { return loadViaImageEl(file); });
+    }
+    return loadViaImageEl(file);
+  }
+  function loadViaImageEl(file) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () { URL.revokeObjectURL(url); resolve(img); };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error(t("photoUnreadable"))); };
+      img.src = url;
+    });
+  }
+
+  function processFile(file) {
+    return loadBitmap(file).then(function (bmp) {
+      var iw = bmp.width, ih = bmp.height;
+      var scale = Math.min(1, MAX_DIM / Math.max(iw, ih));
+      var w = Math.max(1, Math.round(iw * scale));
+      var h = Math.max(1, Math.round(ih * scale));
+      var canvas = document.createElement("canvas");
+      canvas.width = w; canvas.height = h;
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(bmp, 0, 0, w, h);
+      if (bmp.close) bmp.close();
+      return new Promise(function (resolve, reject) {
+        canvas.toBlob(function (blob) {
+          if (!blob) { reject(new Error(t("photoConvertFailed"))); return; }
+          resolve({ blob: blob, previewUrl: URL.createObjectURL(blob), width: w, height: h });
+        }, "image/jpeg", JPEG_QUALITY);
+      });
+    });
+  }
+
+  function validate() {
+    var ok = true;
+    var fnOk = els.filename.value.trim().length > 0;
+    els.filenameField.classList.toggle("invalid", !fnOk);
+    els.filenameMsg.textContent = fnOk ? "" : t("filenameRequired");
+    if (!fnOk) ok = false;
+
+    var nodes = els.entries.querySelectorAll(".entry");
+    if (nodes.length === 0) {
+      showToast(t("needEntry"));
+      ok = false;
+    }
+    var firstInvalid = null;
+    nodes.forEach(function (node) {
+      var has = photoMap.has(node.dataset.id);
+      node.classList.toggle("invalid", !has);
+      if (!has && !firstInvalid) firstInvalid = node;
+    });
+    if (firstInvalid) ok = false;
+
+    if (!ok) {
+      if (!fnOk) { els.filename.focus(); }
+      else if (firstInvalid) { firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" }); }
+    }
+    return ok;
+  }
+
+  function setBusy(busy) {
+    els.generateBtn.classList.toggle("busy", busy);
+    els.generateBtn.disabled = busy;
+  }
+
+  // 伺服器回的檔名（X-Saved-As）已經清理過；拿不到就用使用者輸入的
+  function savedName(res) {
+    var h = res.headers.get("X-Saved-As");
+    if (h) { try { return decodeURIComponent(h); } catch (e) { /* fall through */ } }
+    return els.filename.value.trim().replace(/[\\/:*?"<>|]/g, "_") + ".docx";
+  }
+
+  function downloadName(res, fallback) {
+    var h = res.headers.get("X-Download-As");
+    if (h) { try { return decodeURIComponent(h); } catch (e) { /* fall through */ } }
+    return fallback;
+  }
+
+  function downloadBlob(blob, name) {
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+
+  els.generateBtn.addEventListener("click", function () {
+    if (!current || !validate()) return;
+    flushSave(); // 先存草稿，免得稍後的自動儲存把「已完成」狀態蓋掉
+    var token = turnstileToken();
+    if (TURNSTILE_SITE_KEY && !token) {
+      showToast(t("verifyFirst"));
+      var box = document.getElementById("field-turnstile");
+      if (box) box.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    setBusy(true);
+    setStatus(t("uploading"));
+
+    var nodes = els.entries.querySelectorAll(".entry");
+    var entries = [];
+    var form = new FormData();
+    form.append("category", current.cat.key);
+    form.append("project_name", current.project.name);
+    form.append("project_title", els.project.value.trim());
+    form.append("code", els.code.value.trim());
+    form.append("filename", els.filename.value.trim());
+    form.append("pin", els.pin.value.trim());
+    form.append("cf-turnstile-response", token);
+    nodes.forEach(function (node, i) {
+      entries.push({
+        date: node.querySelector(".f-date").value || null,
+        item: node.querySelector(".f-item").value,
+        location: node.querySelector(".f-location").value,
+        desc: node.querySelector(".f-desc").value,
+      });
+      form.append("photos", photoMap.get(node.dataset.id).blob, "photo-" + (i + 1) + ".jpg");
+    });
+    form.append("entries", JSON.stringify(entries));
+
+    fetch(API_URL, { method: "POST", body: form, credentials: "same-origin" })
+      .then(function (res) {
+        if (!res.ok) {
+          return res.json().catch(function () { return {}; }).then(function (body) {
+            // 中文以外：該語言 → 英文 → 中文
+            var detail = lang === "zh" ? body.detail : (body["detail_" + lang] || body.detail_en || body.detail);
+            throw new Error(detail || t("serverStatus", { n: res.status }));
+          });
+        }
+        var name = savedName(res);
+        var download = downloadName(res, name);
+        var pdf = res.headers.get("X-Pdf");
+        return res.blob().then(function (blob) {
+          downloadBlob(blob, download);
+          if (pdf === "saved") {
+            setStatus(t("doneBoth"));
+          } else if (pdf === "not-saved") {
+            setStatus(t("donePdfNotSaved"));
+          } else if (pdf === "failed") {
+            setStatus(t("doneNoPdf"));
+          } else {
+            setStatus(t("done"));
+          }
+          showToast(t("savedToast", { name: name }));
+        });
+      })
+      .catch(function (err) {
+        var msg = (err && err.message) || t("networkError");
+        // 錯誤訊息來自伺服器或固定字串，仍用 textContent 避免插入 HTML
+        setStatus("");
+        var strong = el("strong", null, t("notDone"));
+        els.status.appendChild(strong);
+        els.status.appendChild(document.createTextNode("：" + msg));
+        showToast(t("notDoneToast", { msg: msg }));
+      })
+      .finally(function () {
+        setBusy(false);
+        resetTurnstile(); // token 只能用一次
+      });
+  });
+
+  // ---------- Cloudflare Turnstile ----------
+  // 不初始化成 null：第一次 render() 在這行之前就會跑到 renderTurnstile()，指定值會把已建立的 widget 洗掉
+  var turnstileWidget;
+  function renderTurnstile() {
+    if (!TURNSTILE_SITE_KEY || turnstileWidget != null) return;
+    // api.js 載入途中 window.turnstile 已存在但 render 還不能用（直接開表單網址時會遇到），等它就緒
+    if (!window.turnstile || typeof window.turnstile.render !== "function") { setTimeout(renderTurnstile, 300); return; }
+    turnstileWidget = window.turnstile.render("#turnstile", {
+      sitekey: TURNSTILE_SITE_KEY,
+      action: "submit",
+      language: TURNSTILE_LANG[lang],
+      "refresh-expired": "auto",
+    });
+  }
+  function turnstileToken() {
+    if (!TURNSTILE_SITE_KEY || turnstileWidget == null || !window.turnstile) return "";
+    return window.turnstile.getResponse(turnstileWidget) || "";
+  }
+  // Turnstile 的語言只能在建立時指定，換語言要拆掉重建（已勾選的驗證要重勾）
+  function resetTurnstileLanguage() {
+    if (turnstileWidget != null && window.turnstile) window.turnstile.remove(turnstileWidget);
+    turnstileWidget = undefined;
+  }
+  function resetTurnstile() {
+    if (turnstileWidget != null && window.turnstile) window.turnstile.reset(turnstileWidget);
+  }
+})();
+</script>

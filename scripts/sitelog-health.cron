@@ -1,0 +1,5 @@
+# 每 5 分鐘檢查系統，有異常傳 Telegram（scripts/healthcheck.sh）。
+# 安裝：sudo install -m 644 scripts/sitelog-health.cron /etc/cron.d/sitelog-health
+# 結果：/var/log/sitelog-health.log
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+*/5 * * * * root /srv/sitelog/scripts/healthcheck.sh >> /var/log/sitelog-health.log 2>&1

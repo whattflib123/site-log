@@ -1,0 +1,22 @@
+# 主機用：疊在 docker-compose.yml 上（.env 設 COMPOSE_FILE=docker-compose.yml:docker-compose.prod.yml）。
+# 外部流量只經 Cloudflare Tunnel 進來：主機不開 80/443，沒有辦法繞過 Cloudflare Access 直接連。
+
+services:
+  caddy:
+    ports: !reset []
+
+  cloudflared:
+    image: cloudflare/cloudflared:2026.10.5
+    restart: unless-stopped
+    command: ["tunnel", "--no-autoupdate", "run"]
+    environment:
+      # Cloudflare Zero Trust → 網路 → Tunnels → 這條通道的 token
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN:?請在 .env 設定 TUNNEL_TOKEN}
+    read_only: true
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 128m
+    depends_on:
+      - caddy
+    networks: [web]

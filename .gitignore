@@ -1,0 +1,7 @@
+
+# Lightsail 系統
+.env
+data/
+__pycache__/
+.pytest_cache/
+*.pyc

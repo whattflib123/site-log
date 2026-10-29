@@ -1,0 +1,32 @@
+# 每次 push、開 PR 都跑 form-app 的測試和腳本語法檢查。只測試，不部署（部署仍在主機上手動跑 scripts/deploy.sh）。
+# action 釘在 commit SHA（tag 可以被改掉），升級時一起改後面的版本註解。
+name: test
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  form-app:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: "3.12"  # 跟 form-app/Dockerfile 的 python:3.12.x 一致
+          cache: pip
+          cache-dependency-path: |
+            form-app/requirements.txt
+            form-app/requirements-dev.txt
+      - name: Install
+        working-directory: form-app
+        run: pip install -r requirements.txt -r requirements-dev.txt
+      - name: Test
+        working-directory: form-app
+        run: python -m pytest -q -p no:cacheprovider
+      - name: Shell syntax
+        run: for f in scripts/*.sh; do bash -n "$f"; done

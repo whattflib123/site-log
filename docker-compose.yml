@@ -1,0 +1,113 @@
+# 表單 → docx → 網盤（Cloudreve）
+# 這份是本機開發用：caddy 只開在 127.0.0.1:80。
+# 主機上再疊 docker-compose.prod.yml（.env 的 COMPOSE_FILE）：加上 cloudflared，caddy 完全不開 port。
+# image 一律釘選版本，升級時改這裡並看各自的 release notes。
+
+services:
+  caddy:
+    image: caddy:2.11.7
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:80:80"
+    environment:
+      DRIVE_DOMAIN: ${DRIVE_DOMAIN}
+      FORM_DOMAIN: ${FORM_DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./data/caddy/data:/data
+      - ./data/caddy/config:/config
+    depends_on:
+      - cloudreve
+      - form-app
+    networks: [web]
+
+  cloudreve:
+    image: cloudreve/cloudreve:4.19.1
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-Asia/Taipei}
+      # 經 caddy 轉發，用 X-Forwarded-For 取得真實 IP（只有 caddy 連得到 cloudreve）
+      CR_CONF_System__ProxyHeader: X-Forwarded-For
+    volumes:
+      # SQLite 資料庫在 ./data/cloudreve/cloudreve.db，是檔案清單的唯一來源，見 scripts/backup.sh
+      - ./data/cloudreve:/cloudreve/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:5212/api/v4/site/ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks: [web]
+
+  form-app:
+    build: ./form-app
+    image: sitelog-form-app:local
+    restart: unless-stopped
+    # 只給 form-app 需要的設定，不用 env_file：.env 裡的 TUNNEL_TOKEN 不該進到這個容器
+    environment:
+      TZ: ${TZ:-Asia/Taipei}
+      WEBDAV_URL: ${WEBDAV_URL}
+      WEBDAV_USER: ${WEBDAV_USER}
+      WEBDAV_PASSWORD: ${WEBDAV_PASSWORD}
+      UPLOAD_ROOT: ${UPLOAD_ROOT:-/}
+      RATE_LIMIT: ${RATE_LIMIT:-5/minute}
+      UPLOAD_PIN: ${UPLOAD_PIN:-}
+      TURNSTILE_SITE_KEY: ${TURNSTILE_SITE_KEY:-}
+      TURNSTILE_SECRET: ${TURNSTILE_SECRET:-}
+      TURNSTILE_HOSTNAME: ${TURNSTILE_HOSTNAME:-}
+      ACCESS_TEAM_DOMAIN: ${ACCESS_TEAM_DOMAIN:-}
+      ACCESS_AUD: ${ACCESS_AUD:-}
+      DRIVE_URL: ${DRIVE_URL:-}
+      ADMIN_EMAILS: ${ADMIN_EMAILS:-}
+      CF_ACCOUNT_ID: ${CF_ACCOUNT_ID:-}
+      CF_LIST_ID: ${CF_LIST_ID:-}
+      CF_API_TOKEN: ${CF_API_TOKEN:-}
+      CF_DRIVE_LIST_ID: ${CF_DRIVE_LIST_ID:-}
+      DRIVE_SHARE_URL: ${DRIVE_SHARE_URL:-}
+      GOTENBERG_URL: ${GOTENBERG_URL-http://gotenberg:3000}
+    volumes:
+      # 共用工程清單 projects.json（scripts/backup.sh 一起備份）；主機上目錄要給 uid 10001 寫，見 scripts/deploy.sh
+      - ./data/form-app:/data
+    read_only: true
+    tmpfs:
+      # 上傳的照片超過 1MB 會暫存在 /tmp；請求上限 60MB，留一點餘裕
+      - /tmp:size=100m
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      - gotenberg
+    networks: [web]
+
+  # Word 轉 PDF（LibreOffice）。只有 form-app 會呼叫，沒有對外 port、Caddy 也不轉給它。
+  gotenberg:
+    image: gotenberg/gotenberg:8.38.1-libreoffice
+    restart: unless-stopped
+    command:
+      - gotenberg
+      - --api-timeout=60s
+      # 只用來轉上傳的檔案：關掉「從網址下載」和 webhook，避免被拿來連內網
+      - --api-disable-download-from
+      - --webhook-disable
+      # 閒置 10 分鐘就關掉 LibreOffice，省記憶體；下一次轉檔再啟動（多幾秒）
+      - --libreoffice-idle-shutdown-timeout=10m
+      - --libreoffice-max-queue-size=5
+      - --log-level=warn
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 768m
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks: [web]
+
+networks:
+  web:

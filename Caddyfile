@@ -1,0 +1,52 @@
+# 網址從 .env 讀，一律帶 http://（例：http://drive.localhost、http://drive.example.com）。
+# HTTPS 由 Cloudflare 負責：流量經 Cloudflare Tunnel（cloudflared 容器）以 HTTP 轉進來，Caddy 不申請憑證。
+{
+	servers {
+		# 只有同一個 compose 內網的 cloudflared（本機開發時是 Docker 主機）連得到 Caddy，
+		# 所以信任它帶來的 Cf-Connecting-IP（Cloudflare 邊緣填的真實使用者 IP，使用者無法偽造）。
+		trusted_proxies static private_ranges
+		client_ip_headers Cf-Connecting-IP
+	}
+}
+
+(common_headers) {
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+}
+
+# 後端（Cloudreve 記錄 IP、form-app 速率限制）看 X-Forwarded-For 的第一個 IP。
+# 直接用 Caddy 判定的使用者 IP 覆蓋，不沿用使用者自己送來的 X-Forwarded-For（可偽造）。
+(to_backend) {
+	header_up X-Forwarded-For {client_ip}
+}
+
+# 網盤：不限制上傳大小（Cloudreve 自己分片上傳、自己管容量）
+{$DRIVE_DOMAIN} {
+	import common_headers
+
+	# WebDAV 只給 form-app 走 compose 內網用，不對外開放。
+	@dav path /dav /dav/*
+	respond @dav 404
+
+	encode zstd gzip
+	reverse_proxy cloudreve:5212 {
+		import to_backend
+	}
+}
+
+# 表單：最多 30 張照片，每張約 1–3MB，整個請求上限 60MB
+{$FORM_DOMAIN} {
+	import common_headers
+	header X-Frame-Options "DENY"
+	request_body {
+		max_size 60MB
+	}
+	encode zstd gzip
+	reverse_proxy form-app:8000 {
+		import to_backend
+	}
+}
