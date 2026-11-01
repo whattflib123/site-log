@@ -1,6 +1,7 @@
 import json
 import logging
 import mimetypes
+import re
 import secrets
 from datetime import datetime
 from pathlib import Path
@@ -10,12 +11,14 @@ from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
+from fastapi.exception_handlers import http_exception_handler
 from fastapi.templating import Jinja2Templates
 from pydantic import ValidationError
 from slowapi import Limiter
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 from starlette.datastructures import UploadFile
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from . import docgen, images, messages, pdf
 from .naming import build_filename, clean_part
@@ -55,6 +58,24 @@ def error(status: int, texts: dict[str, str]) -> JSONResponse:
 def rate_limited(request: Request, exc: RateLimitExceeded) -> JSONResponse:
     log.warning("rate limited ip=%s", get_remote_address(request))
     return error(429, messages.text("rate_limited"))
+
+
+@app.exception_handler(StarletteHTTPException)
+async def page_error(request: Request, exc: StarletteHTTPException) -> Response:
+    """瀏覽器直接開頁面或送出管理頁表單出錯（例：不是管理者卻開 /admin）給看得懂的頁面；表單頁的 fetch 照舊拿 JSON。"""
+    if "text/html" not in request.headers.get("accept", "") or not isinstance(exc.detail, str):
+        return await http_exception_handler(request, exc)
+    # 我們自己寫的訊息是「中文 / English」；框架預設的英文（Not Found 之類）換成白話
+    if re.search(r"[\u4e00-\u9fff]", exc.detail):
+        lines = exc.detail.split(" / ")
+    else:
+        lines = ["網址可能打錯了，請回表單首頁", "The link may be wrong. Please go back to the form."]
+    response = templates.TemplateResponse(request, "error.html", {
+        "title": "無法開啟這個頁面 / Can't open this page",
+        "lines": lines,
+    }, status_code=exc.status_code)
+    response.headers["Content-Security-Policy"] = "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'"
+    return response
 
 
 @app.middleware("http")
@@ -257,7 +278,8 @@ ADMIN_OK = {"added", "removed", "drive-added", "drive-removed", "project-added",
 
 def require_admin(request: Request, email: str = Depends(require_access)) -> str:
     if not settings.admin_enabled or email.lower() not in settings.admins:
-        raise HTTPException(403, "沒有管理權限")
+        log.warning("admin denied: %s %s", email, request.url.path)
+        raise HTTPException(403, "這個頁面只給管理者使用，填表請回表單首頁 / This page is for administrators only")
     return email.lower()
 
 

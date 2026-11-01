@@ -74,6 +74,20 @@ def test_non_admin_forbidden(cf):
     assert cf["patches"] == []
 
 
+def test_non_admin_browser_gets_readable_page(cf):
+    """瀏覽器開 /admin 被擋時看到中文頁面，不是一串 JSON。"""
+    worker = TestClient(main.app, headers={"Cf-Access-Jwt-Assertion": access_token(email="worker@example.com")})
+    r = worker.get("/admin", headers={"Accept": "text/html,application/xhtml+xml,*/*;q=0.8"})
+    assert r.status_code == 403 and r.headers["content-type"].startswith("text/html")
+    assert "只給管理者使用" in r.text and "回表單首頁" in r.text
+    assert worker.get("/admin", headers={"Accept": "application/json"}).json()["detail"].startswith("這個頁面只給管理者")
+    # 管理頁的表單送出被擋（瀏覽器送 POST 也帶 text/html）
+    r = worker.post("/admin/add", data={"email": "x@example.com"}, headers={**ORIGIN, "Accept": "text/html"})
+    assert r.status_code == 403 and "只給管理者使用" in r.text and "{" not in r.text.split("<body>")[1]
+    r = worker.get("/no-such-page", headers={"Accept": "text/html"})
+    assert r.status_code == 404 and "網址可能打錯了" in r.text and "Not Found" not in r.text
+
+
 def test_admin_requires_login(cf):
     assert TestClient(main.app).get("/admin").status_code == 403
 

@@ -651,7 +651,11 @@
       photoUnreadable: "無法讀取這張照片", photoConvertFailed: "相片轉換失敗",
       filenameRequired: "請輸入檔案名稱，將作為下載檔名", needEntry: "請至少新增一筆照片資料",
       verifyFirst: "請先完成人機驗證", uploading: "正在上傳照片、產生 Word…",
-      serverStatus: "伺服器回應 {n}", networkError: "網路連線失敗",
+      errOffline: "網路斷了。請確認網路後再按一次，畫面上的資料都還在",
+      errSession: "登入已過期。請重新整理頁面、收驗證碼登入後再送出（文字會保留，照片要重新選）",
+      errServer: "伺服器暫時出問題。請過幾分鐘再按一次，畫面上的資料都還在（錯誤代碼 {n}）",
+      errOther: "請再按一次；一直失敗請聯絡管理者（錯誤代碼 {n}）",
+      errTooLarge: "照片太多或太大，請刪掉幾張、分兩次送出",
       doneBoth: "<strong>已完成</strong> · Word 和 PDF 已存進網盤，PDF 已下載到此裝置",
       donePdfNotSaved: "<strong>已完成</strong> · Word 已存進網盤，PDF 只下載到此裝置（沒存進網盤）",
       doneNoPdf: "<strong>已完成</strong> · 已存進網盤並下載 Word（這次沒有產生 PDF）",
@@ -683,7 +687,11 @@
       photoUnreadable: "This photo could not be read", photoConvertFailed: "Could not convert the photo",
       filenameRequired: "Please enter a file name; it is used for the download", needEntry: "Please add at least one photo record",
       verifyFirst: "Please complete the human verification first", uploading: "Uploading photos and creating the document…",
-      serverStatus: "Server error {n}", networkError: "Network connection failed",
+      errOffline: "No internet connection. Check your network and try again; your entries are still here.",
+      errSession: "Your sign-in has expired. Reload the page, sign in with the email code, then send again (text is kept; photos must be chosen again).",
+      errServer: "The server is having a problem. Please try again in a few minutes; your entries are still here (error {n}).",
+      errOther: "Please try again. If it keeps failing, contact the administrator (error {n}).",
+      errTooLarge: "Too many or too large photos. Remove some and send in two batches.",
       doneBoth: "<strong>Done</strong> · Word and PDF saved to the drive; PDF downloaded to this device",
       donePdfNotSaved: "<strong>Done</strong> · Word saved to the drive; PDF downloaded to this device only",
       doneNoPdf: "<strong>Done</strong> · Saved to the drive and Word downloaded (no PDF this time)",
@@ -717,7 +725,11 @@
       photoUnreadable: "Không đọc được ảnh này", photoConvertFailed: "Không chuyển đổi được ảnh",
       filenameRequired: "Vui lòng nhập tên tệp, dùng làm tên tệp tải xuống", needEntry: "Vui lòng thêm ít nhất một mục ảnh",
       verifyFirst: "Vui lòng hoàn tất xác minh trước", uploading: "Đang tải ảnh lên và tạo tài liệu…",
-      serverStatus: "Lỗi máy chủ {n}", networkError: "Lỗi kết nối mạng",
+      errOffline: "Mất kết nối mạng. Kiểm tra mạng rồi bấm lại; dữ liệu trên màn hình vẫn còn.",
+      errSession: "Phiên đăng nhập đã hết hạn. Tải lại trang, đăng nhập bằng mã email rồi gửi lại (chữ được giữ lại, ảnh phải chọn lại).",
+      errServer: "Máy chủ đang gặp sự cố. Vui lòng thử lại sau vài phút; dữ liệu trên màn hình vẫn còn (mã lỗi {n}).",
+      errOther: "Vui lòng thử lại. Nếu vẫn lỗi, hãy liên hệ quản lý (mã lỗi {n}).",
+      errTooLarge: "Ảnh quá nhiều hoặc quá lớn. Hãy bớt vài ảnh và gửi làm hai lần.",
       doneBoth: "<strong>Hoàn tất</strong> · Đã lưu Word và PDF vào ổ lưu trữ; PDF đã tải về thiết bị này",
       donePdfNotSaved: "<strong>Hoàn tất</strong> · Đã lưu Word vào ổ lưu trữ; PDF chỉ tải về thiết bị này",
       doneNoPdf: "<strong>Hoàn tất</strong> · Đã lưu vào ổ lưu trữ và tải Word về (lần này không có PDF)",
@@ -751,7 +763,11 @@
       photoUnreadable: "ไม่สามารถอ่านรูปนี้ได้", photoConvertFailed: "แปลงรูปไม่สำเร็จ",
       filenameRequired: "กรุณากรอกชื่อไฟล์ ใช้เป็นชื่อไฟล์ที่ดาวน์โหลด", needEntry: "กรุณาเพิ่มรายการรูปภาพอย่างน้อยหนึ่งรายการ",
       verifyFirst: "กรุณายืนยันก่อน", uploading: "กำลังอัปโหลดรูปและสร้างเอกสาร…",
-      serverStatus: "เซิร์ฟเวอร์ผิดพลาด {n}", networkError: "เชื่อมต่อเครือข่ายไม่สำเร็จ",
+      errOffline: "อินเทอร์เน็ตหลุด กรุณาตรวจสอบเครือข่ายแล้วกดอีกครั้ง ข้อมูลบนหน้าจอยังอยู่",
+      errSession: "การเข้าสู่ระบบหมดอายุ กรุณาโหลดหน้าใหม่ เข้าสู่ระบบด้วยรหัสทางอีเมล แล้วส่งอีกครั้ง (ข้อความยังอยู่ แต่ต้องเลือกรูปใหม่)",
+      errServer: "เซิร์ฟเวอร์มีปัญหาชั่วคราว กรุณาลองใหม่ในอีกไม่กี่นาที ข้อมูลบนหน้าจอยังอยู่ (รหัสข้อผิดพลาด {n})",
+      errOther: "กรุณาลองอีกครั้ง หากยังไม่สำเร็จ โปรดติดต่อผู้ดูแล (รหัสข้อผิดพลาด {n})",
+      errTooLarge: "รูปมากหรือใหญ่เกินไป กรุณาลบบางรูปแล้วแบ่งส่งเป็นสองครั้ง",
       doneBoth: "<strong>เสร็จแล้ว</strong> · บันทึก Word และ PDF ลงไดรฟ์แล้ว ดาวน์โหลด PDF ลงอุปกรณ์นี้แล้ว",
       donePdfNotSaved: "<strong>เสร็จแล้ว</strong> · บันทึก Word ลงไดรฟ์แล้ว PDF ดาวน์โหลดลงอุปกรณ์นี้เท่านั้น",
       doneNoPdf: "<strong>เสร็จแล้ว</strong> · บันทึกลงไดรฟ์และดาวน์โหลด Word แล้ว (ครั้งนี้ไม่มี PDF)",
@@ -1034,7 +1050,7 @@
         setSlotPhoto(node, rec);
         setStatus(t("draftSaved"));
       }).catch(function (err) {
-        showToast(t("addPhotoFailed", { msg: err.message }));
+        showToast(t("addPhotoFailed", { msg: (err && err.userFacing) ? err.message : t("photoUnreadable") }));
       });
     });
 
@@ -1205,7 +1221,7 @@
       var url = URL.createObjectURL(file);
       var img = new Image();
       img.onload = function () { URL.revokeObjectURL(url); resolve(img); };
-      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error(t("photoUnreadable"))); };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(userError(t("photoUnreadable"))); };
       img.src = url;
     });
   }
@@ -1223,7 +1239,7 @@
       if (bmp.close) bmp.close();
       return new Promise(function (resolve, reject) {
         canvas.toBlob(function (blob) {
-          if (!blob) { reject(new Error(t("photoConvertFailed"))); return; }
+          if (!blob) { reject(userError(t("photoConvertFailed"))); return; }
           resolve({ blob: blob, previewUrl: URL.createObjectURL(blob), width: w, height: h });
         }, "image/jpeg", JPEG_QUALITY);
       });
@@ -1324,9 +1340,7 @@
       .then(function (res) {
         if (!res.ok) {
           return res.json().catch(function () { return {}; }).then(function (body) {
-            // 中文以外：該語言 → 英文 → 中文
-            var detail = lang === "zh" ? body.detail : (body["detail_" + lang] || body.detail_en || body.detail);
-            throw new Error(detail || t("serverStatus", { n: res.status }));
+            throw userError(friendlyError(res.status, body));
           });
         }
         var name = savedName(res);
@@ -1347,7 +1361,11 @@
         });
       })
       .catch(function (err) {
-        var msg = (err && err.message) || t("networkError");
+        // 瀏覽器自己的錯誤（Load failed、Failed to fetch…）不直接給使用者看
+        return (err && err.userFacing) ? err.message : whyOffline();
+      })
+      .then(function (msg) {
+        if (!msg) return;
         // 錯誤訊息來自伺服器或固定字串，仍用 textContent 避免插入 HTML
         setStatus("");
         var strong = el("strong", null, t("notDone"));
@@ -1360,6 +1378,31 @@
         resetTurnstile(); // token 只能用一次
       });
   });
+
+  // ---------- 送出失敗的訊息 ----------
+  // 只有伺服器自己寫好的訊息（有 detail_en，來自 app/messages.py）才照用；其他依狀態碼換成白話
+  function friendlyError(status, body) {
+    if (body && body.detail_en) {
+      return lang === "zh" ? body.detail : (body["detail_" + lang] || body.detail_en);
+    }
+    if (status === 401 || status === 403) return t("errSession");
+    if (status === 413) return t("errTooLarge");
+    if (status >= 500) return t("errServer", { n: status });
+    return t("errOther", { n: status });
+  }
+  function userError(msg) {
+    var err = new Error(msg);
+    err.userFacing = true;
+    return err;
+  }
+  // 送出時連不到：可能是沒網路，也可能是 Cloudflare 登入過期（被轉到登入頁，fetch 會失敗）
+  function whyOffline() {
+    return fetch(PROJECTS_URL, { credentials: "same-origin", redirect: "manual", cache: "no-store" })
+      .then(function (res) {
+        return (res.type === "opaqueredirect" || res.status === 401 || res.status === 403) ? t("errSession") : t("errOffline");
+      })
+      .catch(function () { return t("errOffline"); });
+  }
 
   // ---------- Cloudflare Turnstile ----------
   // 不初始化成 null：第一次 render() 在這行之前就會跑到 renderTurnstile()，指定值會把已建立的 widget 洗掉

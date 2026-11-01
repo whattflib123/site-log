@@ -17,6 +17,7 @@
 - 送出後下載 PDF，同時把 Word 和 PDF 存進網盤 `form-output/年/月/`
 - 介面可切換 **中文／English／Tiếng Việt／ไทย**（給移工用；越南文、泰文頁面會提示「翻譯僅供參考」，可縮成一行）
 - 照片一律在伺服器重新編碼：去掉 EXIF／GPS、擋掉假圖片與解壓縮炸彈
+- 錯誤訊息一律白話：不把伺服器或瀏覽器的原始訊息丟給使用者，依情況說「登入已過期」「網路斷了」「照片太多」「伺服器暫時出問題」，並告訴使用者畫面上的資料還在不在
 
 **管理者（`/admin`，不用進 Cloudflare 後台）**
 - 表單白名單、網盤白名單：新增／移除 email；移除時呼叫 Cloudflare API 立刻撤銷對方登入
@@ -28,7 +29,7 @@
 **維運**
 - 每天把網盤資料庫備份到 Cloudflare R2（保留 7 份），另有 Lightsail 每日快照
 - 每 5 分鐘健康檢查：容器狀態、外部連線、每小時實際寫一次檔案到網盤／R2、硬碟、備份新鮮度、程式錯誤 log；有異常傳 Telegram，恢復時再通知一次
-- GitHub Actions 每次 push 跑 120 個測試
+- GitHub Actions 每次 push 跑 121 個測試
 
 ## 架構
 
@@ -82,7 +83,7 @@ form-app/
   app/security.py         Turnstile、Access JWT  app/whitelist.py  Cloudflare 清單與撤銷登入
   app/projects.py         工程清單（JSON 檔）    app/messages.py   四種語言的錯誤訊息
   app/templates/          index.html（表單）、admin.html（管理頁）
-  tests/                  120 個測試
+  tests/                  121 個測試
 scripts/                  bootstrap_server.sh、deploy.sh、backup.sh、healthcheck.sh、notify.sh …
 ```
 
@@ -114,7 +115,7 @@ docker run --rm --user 0 -e PIP_ROOT_USER_ACTION=ignore -v "$PWD":/srv -w /srv s
   sh -c "pip install -q -r requirements-dev.txt && python -m pytest -q -p no:cacheprovider"
 ```
 
-涵蓋：Access JWT（錯的金鑰／AUD／發行者／過期／HS256 偽造）、Turnstile、速率限制、照片驗證（EXIF/GPS、解壓縮炸彈、假圖片）、欄位驗證與四種語言錯誤訊息、Word 內容、PDF（成功、轉檔失敗改給 Word、存檔失敗）、WebDAV 重試、白名單管理與撤銷、工程清單、CSRF、CSP nonce。
+涵蓋：Access JWT（錯的金鑰／AUD／發行者／過期／HS256 偽造）、Turnstile、速率限制、照片驗證（EXIF/GPS、解壓縮炸彈、假圖片）、欄位驗證與四種語言錯誤訊息、Word 內容、PDF（成功、轉檔失敗改給 Word、存檔失敗）、WebDAV 重試、白名單管理與撤銷、工程清單、CSRF、CSP nonce、錯誤頁面。
 
 ## 部署到 Lightsail
 
